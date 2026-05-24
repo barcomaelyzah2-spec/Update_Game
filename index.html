@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fun Learning Games</title>
+
+<style>
+body{
+  font-family:Arial;
+  text-align:center;
+  background:linear-gradient(to right,#ffecd2,#fcb69f);
+}
+
+h1{
+  color:#333;
+}
+
+button{
+  padding:10px 15px;
+  margin:5px;
+  font-size:16px;
+  border-radius:10px;
+  cursor:pointer;
+  border:none;
+  background:#4CAF50;
+  color:white;
+}
+
+button:hover{
+  background:#45a049;
+}
+
+.hidden{display:none;}
+
+.game-box{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  margin:15px auto;
+  width:350px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,60px);
+  gap:10px;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.box{
+  width:60px;
+  height:60px;
+  background:lightgray;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.score, .lives{
+  font-weight:bold;
+  color:#222;
+  margin:5px 0;
+}
+
+.lives{
+  color:red;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 Fun Learning Games</h1>
+
+<!-- MENU -->
+<div id="menu" class="game-box">
+<h3>Choose Game:</h3>
+<button onclick="showGame('color')">🎨 Color</button>
+<button onclick="showGame('shape')">🔷 Shape</button>
+<button onclick="showGame('memory')">🧠 Memory</button>
+<button onclick="showGame('count')">🔢 Counting</button>
+<button onclick="showGame('animal')">🐾 Animal</button>
+</div>
+
+<!-- COLOR GAME -->
+<div id="color" class="hidden game-box">
+<h2>🎨 Color Game</h2>
+<p class="score">Score: <span id="scoreColor">0</span></p>
+<p class="lives">Lives: <span id="livesColor">3</span></p>
+<p id="colorQ"></p>
+<div>
+<button style="background:red;width:60px;height:60px;" onclick="checkColor('red')"></button>
+<button style="background:blue;width:60px;height:60px;" onclick="checkColor('blue')"></button>
+<button style="background:yellow;width:60px;height:60px;" onclick="checkColor('yellow')"></button>
+<button style="background:green;width:60px;height:60px;" onclick="checkColor('green')"></button>
+<button style="background:purple;width:60px;height:60px;" onclick="checkColor('purple')"></button>
+</div>
+<p id="colorResult"></p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- SHAPE GAME -->
+<div id="shape" class="hidden game-box">
+<h2>🔷 Shape Game</h2>
+<p class="score">Score: <span id="scoreShape">0</span></p>
+<p class="lives">Lives: <span id="livesShape">3</span></p>
+<p id="shapeQ"></p>
+<div id="shapeOptions"></div>
+<p id="shapeResult"></p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- MEMORY GAME -->
+<div id="memory" class="hidden game-box">
+<h2>🧠 Memory Game</h2>
+<p class="score">Score: <span id="scoreMemory">0</span></p>
+<p class="lives">Lives: <span id="livesMemory">3</span></p>
+<div class="grid" id="memoryGrid"></div>
+<p id="memoryResult"></p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- COUNT GAME -->
+<div id="count" class="hidden game-box">
+<h2>🔢 Counting Game</h2>
+<p class="score">Score: <span id="scoreCount">0</span></p>
+<p class="lives">Lives: <span id="livesCount">3</span></p>
+<p id="countQ"></p>
+<div id="countOptions"></div>
+<p id="countResult"></p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- ANIMAL GAME -->
+<div id="animal" class="hidden game-box">
+<h2>🐾 Animal Game</h2>
+<p class="score">Score: <span id="scoreAnimal">0</span></p>
+<p class="lives">Lives: <span id="livesAnimal">3</span></p>
+<p id="animalQ"></p>
+<button onclick="animal('cat')">🐱</button>
+<button onclick="animal('dog')">🐶</button>
+<button onclick="animal('cow')">🐮</button>
+<button onclick="animal('duck')">🦆</button>
+<p id="animalResult"></p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- SOUNDS -->
+<audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
+<audio id="wrongSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+
+<script>
+let lives = 3;
+let totalScore = 0;
+
+// Reset lives and score for each game
+function resetGame(gameId){
+  lives = 3;
+  totalScore = 0;
+  document.getElementById("scoreColor").innerText = 0;
+  document.getElementById("scoreShape").innerText = 0;
+  document.getElementById("scoreMemory").innerText = 0;
+  document.getElementById("scoreCount").innerText = 0;
+  document.getElementById("scoreAnimal").innerText = 0;
+  
+  document.getElementById("livesColor").innerText = lives;
+  document.getElementById("livesShape").innerText = lives;
+  document.getElementById("livesMemory").innerText = lives;
+  document.getElementById("livesCount").innerText = lives;
+  document.getElementById("livesAnimal").innerText = lives;
+}
+
+// Update score and lives in the current game
+function addScore(game){
+  totalScore += 5;
+  document.getElementById("score"+game).innerText = totalScore;
+}
+
+function loseLife(game){
+  lives--;
+  document.getElementById("lives"+game).innerText = lives;
+  if(lives <= 0){
+    alert("💀 Game Over!");
+    resetGame();
+    back();
+  }
+}
+
+// Navigation
+function showGame(id){
+  document.querySelectorAll(".game-box").forEach(d => d.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  resetGame();
+  if(id==="color") newColorQ();
+  if(id==="shape") loadShapeGame();
+  if(id==="memory") loadMemory();
+  if(id==="count") loadCount();
+  if(id==="animal") newAnimalQ();
+}
+
+function back(){
+  document.querySelectorAll(".game-box").forEach(d => d.classList.add("hidden"));
+  document.getElementById("menu").classList.remove("hidden");
+}
+
+// ========== COLOR GAME ==========
+let colors = ["red","blue","yellow","green","purple"];
+let correctColor = "";
+
+function newColorQ(){
+  correctColor = colors[Math.floor(Math.random() * colors.length)];
+  document.getElementById("colorQ").innerText = "🎯 Click the color: " + correctColor.toUpperCase();
+  document.getElementById("colorResult").innerText = "";
+}
+
+function checkColor(c){
+  if(c === correctColor){
+    document.getElementById("colorResult").innerText = "✅ Correct!";
+    document.getElementById("correctSound").play();
+    addScore("Color");
+    setTimeout(newColorQ, 800);
+  } else{
+    document.getElementById("colorResult").innerText = "❌ Wrong!";
+    document.getElementById("wrongSound").play();
+    loseLife("Color");
+  }
+}
+
+// ========== SHAPE GAME ==========
+let shapes = [
+  {name:"circle", html:'<div style="width:60px;height:60px;background:red;border-radius:50%;"></div>'},
+  {name:"square", html:'<div style="width:60px;height:60px;background:blue;"></div>'},
+  {name:"triangle", html:'<div style="width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:60px solid green;"></div>'},
+  {name:"star", html:'<div style="font-size:40px;">⭐</div>'}
+];
+let correctShape = "";
+
+function loadShapeGame(){
+  let numChoices = 4;
+  let shuffled = [...shapes].sort(() => 0.5 - Math.random());
+  let choices = shuffled.slice(0, numChoices);
+  correctShape = choices[Math.floor(Math.random() * choices.length)].name;
+
+  document.getElementById("shapeQ").innerText = "🎯 Find the: " + correctShape.toUpperCase();
+  document.getElementById("shapeResult").innerText = "";
+
+  let html = "";
+  choices.forEach(shape => {
+    html += `<div onclick="checkShape('${shape.name}')" style="display:inline-block;margin:10px;cursor:pointer;">${shape.html}</div>`;
+  });
+  document.getElementById("shapeOptions").innerHTML = html;
+}
+
+function checkShape(selected){
+  if(selected === correctShape){
+    document.getElementById("shapeResult").innerText = "✅ Correct!";
+    document.getElementById("correctSound").play();
+    addScore("Shape");
+    setTimeout(loadShapeGame, 800);
+  } else{
+    document.getElementById("shapeResult").innerText = "❌ Wrong!";
+    document.getElementById("wrongSound").play();
+    loseLife("Shape");
+  }
+}
+
+// ========== MEMORY GAME ==========
+let grid = document.getElementById("memoryGrid");
+
+function loadMemory(){
+  grid.innerHTML="";
+  let values = ["red","blue","green","yellow","red","blue","green","yellow"];
+  values.sort(() => 0.5 - Math.random());
+  let selected=[];
+
+  values.forEach(color=>{
+    let box=document.createElement("div");
+    box.className="box";
+    box.onclick=function(){
+      box.style.background=color;
+      selected.push({box,color});
+      if(selected.length===2){
+        if(selected[0].color===selected[1].color){
+          addScore("Memory");
+          selected=[];
+        } else{
+          setTimeout(()=>{
+            selected[0].box.style.background="lightgray";
+            selected[1].box.style.background="lightgray";
+            selected=[];
+            loseLife("Memory");
+          },500);
+        }
+      }
+    };
+    grid.appendChild(box);
+  });
+}
+
+// ========== COUNT GAME ==========
+function loadCount(){
+  let num=Math.floor(Math.random()*10)+1;
+  document.getElementById("countQ").innerText="Select number: "+num;
+  document.getElementById("countResult").innerText="";
+  let html="";
+  for(let i=1;i<=10;i++){
+    html+=`<button onclick="checkCount(${i},${num})">${i}</button>`;
+  }
+  document.getElementById("countOptions").innerHTML=html;
+}
+
+function checkCount(ans,correct){
+  if(ans===correct){
+    document.getElementById("countResult").innerText="✅ Correct!";
+    document.getElementById("correctSound").play();
+    addScore("Count");
+    loadCount();
+  } else{
+    document.getElementById("countResult").innerText="❌ Wrong!";
+    document.getElementById("wrongSound").play();
+    loseLife("Count");
+  }
+}
+
+// ========== ANIMAL GAME ==========
+let animals=[
+  {sound:"Meow", answer:"cat"},
+  {sound:"Bark", answer:"dog"},
+  {sound:"Moo", answer:"cow"},
+  {sound:"Quack", answer:"duck"}
+];
+let currentAnimal;
+
+function newAnimalQ(){
+  currentAnimal = animals[Math.floor(Math.random()*animals.length)];
+  document.getElementById("animalQ").innerText="Which says \""+currentAnimal.sound+"\"?";
+  document.getElementById("animalResult").innerText="";
+}
+
+function animal(a){
+  if(a===currentAnimal.answer){
+    document.getElementById("animalResult").innerText="✅ Correct!";
+    document.getElementById("correctSound").play();
+    addScore("Animal");
+    newAnimalQ();
+  } else{
+    document.getElementById("animalResult").innerText="❌ Wrong!";
+    document.getElementById("wrongSound").play();
+    loseLife("Animal");
+  }
+}
+</script>
+
+</body>
+</html>

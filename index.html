@@ -74,19 +74,23 @@
         }
         .sound-repeat-btn:active { transform: translateY(4px); box-shadow: 0 1px 0px #e1b12c; }
 
-        /* --- Tracing Game Specific Styles --- */
-        .color-container { margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: #006064; }
-        #colorPicker { border: none; background: transparent; width: 40px; height: 40px; cursor: pointer; vertical-align: middle; }
-        .wrap { position: relative; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-radius: 20px; background: white; padding: 10px; margin: 10px auto; }
-        canvas { border: 4px dashed #00838f; background: transparent; border-radius: 15px; touch-action: none; display: block; }
-        .guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 260px; font-weight: bold; color: rgba(0, 0, 0, 0.07); pointer-events: none; font-family: Arial, sans-serif; }
-        .tracing-controls { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
-        .clear { background: #ff7675; color: white; box-shadow: 0 5px 0px #c0392b; }
-        .clear:active { box-shadow: 0 1px 0px #c0392b; }
-        .done { background: #00cec9; color: white; box-shadow: 0 5px 0px #0097e6; }
-        .done:active { box-shadow: 0 1px 0px #0097e6; }
-        .next { background: #2ecc71; color: white; box-shadow: 0 5px 0px #27ae60; }
-        .next:active { box-shadow: 0 1px 0px #27ae60; }
+        /* --- Redesigned Tracing Game Styles --- */
+        .color-container { 
+            margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: #2d3436; 
+            background: #f1f2f6; padding: 10px; border-radius: 15px; display: inline-block;
+        }
+        #colorPicker { border: 3px solid white; background: transparent; width: 45px; height: 45px; cursor: pointer; vertical-align: middle; border-radius: 50%; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        .wrap { position: relative; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-radius: 25px; background: #f8f9fa; padding: 15px; margin: 10px auto; border: 4px dashed var(--primary); }
+        canvas { background: white; border-radius: 20px; touch-action: none; display: block; cursor: crosshair; }
+        .guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 240px; font-weight: 700; color: rgba(108, 92, 231, 0.09); pointer-events: none; font-family: 'Quicksand', sans-serif; }
+        .tracing-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        
+        .clear { background: #ff7675; color: white; box-shadow: 0 5px 0px #b2bec3; box-shadow: 0 5px 0px #d63031; }
+        .clear:active { box-shadow: 0 1px 0px #d63031; }
+        .done { background: #00cec9; color: white; box-shadow: 0 5px 0px #00b894; }
+        .done:active { box-shadow: 0 1px 0px #00b894; }
+        .next { background: var(--primary); color: white; box-shadow: 0 5px 0px #4834D4; }
+        .next:active { box-shadow: 0 1px 0px #4834D4; }
         .stars-display { font-size: 35px; height: 45px; color: gold; margin-top: 5px; }
     </style>
 </head>
@@ -312,15 +316,14 @@
             for(let i=1; i<=10; i++) area.innerHTML += `<button onclick="handleResult(${i}===${num})">${i}</button>`;
         }
 
-        // --- NEW INTEGRATED TRACING GAME ---
+        // --- ALTERED TRACING GAME DESIGN ---
         else if (state.currentGame === 'tracing') {
-            q.innerText = "Draw on the number!";
+            q.innerText = "Trace the number nicely!";
             
-            // Build tracing UI elements inside action area container dynamically
             area.innerHTML = `
                 <div class="color-container">
-                    <label for="colorPicker">🎨 Pick Crayon: </label> 
-                    <input type="color" id="colorPicker" value="#9c27b0">
+                    <label for="colorPicker">🎨 Choose Crayon: </label> 
+                    <input type="color" id="colorPicker" value="#6C5CE7">
                 </div>
                 <div class="wrap">
                     <div class="guide" id="guideNumber">${tracingNumbers[tracingIndex]}</div>
@@ -406,38 +409,42 @@
         document.getElementById("stars").innerText = "";
     }
 
+    // --- FIXED SCORE TRACING CALCULATION ---
     function checkTrace() {
         if (numberDone || rawPointsCount === 0) return;
 
-        let scoreCalculated = Math.min(100, Math.floor(rawPointsCount * 1.6));
-        
-        if(scoreCalculated < 25) {
+        // Require a minimum amount of drawn points to ensure they tried tracing
+        if(rawPointsCount < 20) {
             document.getElementById("feedback").innerText = "Keep tracing to finish!";
             return;
         }
 
-        let starCount = 1;
-        if (scoreCalculated > 85) starCount = 5;
-        else if (scoreCalculated > 65) starCount = 4;
-        else if (scoreCalculated > 45) starCount = 3;
-        else if (scoreCalculated > 30) starCount = 2;
+        // Fixed score payout for completing a trace successfully
+        let fixedScorePayout = 20;
+        
+        // Stars calculation criteria remains balanced dynamically for satisfaction visuals
+        let starCount = 3;
+        if (rawPointsCount > 55) starCount = 5;
+        else if (rawPointsCount > 35) starCount = 4;
 
         let stars = "⭐".repeat(starCount);
         document.getElementById("stars").innerText = stars;
 
-        // Award matching score directly to standard gameplay points loop
-        state.score += scoreCalculated;
+        // Apply fixed configuration points directly to gameplay loop
+        state.score += fixedScorePayout;
         updateHUD();
 
         numberDone = true;
         document.getElementById("doneBtn").disabled = true;
 
         if ('speechSynthesis' in window) {
-            let feedbackText = scoreCalculated > 60 ? "Super job!" : "Way to try! Let's hit the next one.";
+            let feedbackText = "Super job! Next number.";
             let msg = new SpeechSynthesisUtterance(feedbackText);
             speechSynthesis.speak(msg);
         }
-        document.getElementById("feedback").innerHTML = `<span style='color:var(--success)'>Score: +${scoreCalculated}</span>`;
+        document.getElementById("feedback").innerHTML = `<span style='color:var(--success)'>Score: +${fixedScorePayout}</span>`;
+        document.getElementById('game-board').classList.add('correct-anim');
+        setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
     }
 
     function nextTracingNumber() {

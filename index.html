@@ -68,7 +68,7 @@
 
         /* --- Sound Button Style --- */
         .sound-repeat-btn {
-            background: #ffeaa7; color: #d63031; box-shadow: 0 5px 0px #e1b12c;
+            background: #ffeaa7; color: #d63031; box-shadow: 0 5px 0px #chi-color, #e1b12c;
             font-size: 1.1rem; padding: 10px 20px; border-radius: 50px; margin-bottom: 15px;
         }
         .sound-repeat-btn:active { box-shadow: 0 1px 0px #e1b12c; }
@@ -107,15 +107,12 @@
         <source src="https://www.soundjay.com/free-music/sounds/barn-beat-01.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Global animal sound audio controller element -->
-    <audio id="animalAudioPlayer"></audio>
-
 <script>
     let state = {
         score: 0, lives: 3, level: 1, 
         highScore: parseInt(localStorage.getItem('kidsHS')) || 0,
         currentGame: '', correctAnswer: null,
-        currentAnimalSound: '' // Keeps track of audio URL to repeat
+        currentAnimalSound: '' // Keeps track of sound string to repeat
     };
 
     let flipped = [];
@@ -137,17 +134,6 @@
             utterance.pitch = 1.2;
             window.speechSynthesis.speak(utterance);
         }
-    }
-
-    // New internal function to trigger raw organic animal sounds
-    function playRealAnimalSound(url) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Mute standard narration text reads
-        }
-        const player = document.getElementById('animalAudioPlayer');
-        player.src = url;
-        player.currentTime = 0;
-        player.play().catch(err => console.log("Audio play blocked until interaction:", err));
     }
 
     function startGame(type) {
@@ -173,33 +159,30 @@
         flipped = [];
         isProcessing = false;
 
-        // --- REAL NATURAL AUDIO ANIMAL GAME ---
+        // --- UPDATED ANIMAL GAME ---
         if (state.currentGame === 'animal') {
             const animals = [
-                {n:'Lion', s:'https://www.soundjay.com/nature/sounds/lion-roar-01.mp3', e:'🦁'}, 
-                {n:'Elephant', s:'https://assets.mixkit.co/active_storage/sfx/2242/2242-84.wav', e:'🐘'},
-                {n:'Chicken', s:'https://www.soundjay.com/nature/sounds/chicken-rooster-01.mp3', e:'🐔'}, 
-                {n:'Monkey', s:'https://assets.mixkit.co/active_storage/sfx/2241/2241-84.wav', e:'🐒'},
-                {n:'Sheep', s:'https://www.soundjay.com/nature/sounds/sheep-01.mp3', e:'🐑'}, 
-                {n:'Frog', s:'https://www.soundjay.com/nature/sounds/frog-croaking-02.mp3', e:'🐸'},
-                {n:'Bee', s:'https://assets.mixkit.co/active_storage/sfx/2243/2243-84.wav', e:'🐝'}, 
-                {n:'Owl', s:'https://assets.mixkit.co/active_storage/sfx/1110/1110-84.wav', e:'🦉'}
+                {n:'Lion', s:'Roar', e:'🦁'}, {n:'Elephant', s:'Pawoo', e:'🐘'},
+                {n:'Chicken', s:'Bawk-bawk', e:'🐔'}, {n:'Monkey', s:'Ooh ooh aah aah', e:'🐒'},
+                {n:'Sheep', s:'Baaa', e:'🐑'}, {n:'Frog', s:'Ribbit', e:'🐸'},
+                {n:'Bee', s:'Buzzzz', e:'🐝'}, {n:'Owl', s:'Hoot Hoot', e:'🦉'}
             ];
             let pick = animals[Math.floor(Math.random() * animals.length)];
-            state.correctAnswer = pick; 
+            state.correctAnswer = pick; // Save the full object instead of just the name string
             state.currentAnimalSound = pick.s;
             
             q.innerText = `Which animal makes this sound?`;
-            playRealAnimalSound(pick.s);
+            speak(pick.s);
             
-            // Repeat sound button points directly to the real clip player function
-            area.innerHTML += `<button class="sound-repeat-btn" onclick="playRealAnimalSound(state.currentAnimalSound)">🔊 Hear Sound Again</button><br>`;
+            // Repeat sound button
+            area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound)">🔊 Hear Sound Again</button><br>`;
             
             let choices = [...animals].sort(() => 0.5 - Math.random()).slice(0, 4);
             if (!choices.find(a => a.n === pick.n)) choices[0] = pick;
             
             let buttonsContainer = `<div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">`;
             choices.sort(() => 0.5 - Math.random()).forEach(a => {
+                // Modified button styles to make the graphics look huge, crystal clear, and scale nicely
                 buttonsContainer += `<button class="animal-btn" style="background: #ffffff; border: 4px solid var(--primary); border-radius: 25px; box-shadow: 0 6px 0 #4834D4; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" onclick="handleAnimalResult('${a.n}'==='${pick.n}')">${a.e}</button>`;
             });
             buttonsContainer += `</div>`;
@@ -377,9 +360,6 @@
         const music = document.getElementById('bgMusic');
         music.pause();
         music.currentTime = 0;
-
-        // Make sure running animal audio tracks stop playing if the game ends
-        document.getElementById('animalAudioPlayer').pause();
 
         if(state.score > state.highScore) {
             state.highScore = state.score;

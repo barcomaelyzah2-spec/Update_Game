@@ -71,7 +71,7 @@
             background: #ffeaa7; color: #d63031; box-shadow: 0 5px 0px #e1b12c;
             font-size: 1.1rem; padding: 10px 20px; border-radius: 50px; margin-bottom: 15px;
         }
-        .sound-repeat-btn:active { transform: translateY(4px); box-shadow: 0 1px 0px #e1b12c; }
+        .sound-repeat-btn:active { box-shadow: 0 1px 0px #e1b12c; }
     </style>
 </head>
 <body>
@@ -107,12 +107,15 @@
         <source src="https://www.soundjay.com/free-music/sounds/barn-beat-01.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Global animal sound audio controller element -->
+    <audio id="animalAudioPlayer"></audio>
+
 <script>
     let state = {
         score: 0, lives: 3, level: 1, 
         highScore: parseInt(localStorage.getItem('kidsHS')) || 0,
         currentGame: '', correctAnswer: null,
-        currentAnimalSound: '' 
+        currentAnimalSound: '' // Keeps track of audio URL to repeat
     };
 
     let flipped = [];
@@ -128,12 +131,23 @@
 
     function speak(text) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); 
+            window.speechSynthesis.cancel(); // Stop current speech
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 0.9;
             utterance.pitch = 1.2;
             window.speechSynthesis.speak(utterance);
         }
+    }
+
+    // New internal function to trigger raw organic animal sounds
+    function playRealAnimalSound(url) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Mute standard narration text reads
+        }
+        const player = document.getElementById('animalAudioPlayer');
+        player.src = url;
+        player.currentTime = 0;
+        player.play().catch(err => console.log("Audio play blocked until interaction:", err));
     }
 
     function startGame(type) {
@@ -143,6 +157,7 @@
         document.getElementById('game-board').classList.remove('hidden');
         document.getElementById('game-title').innerText = type.toUpperCase();
         
+        // Start Background Music
         const music = document.getElementById('bgMusic');
         music.volume = 0.2;
         music.play().catch(() => console.log("Music needs user interaction first"));
@@ -158,22 +173,27 @@
         flipped = [];
         isProcessing = false;
 
-        // --- ANIMAL GAME ---
+        // --- REAL NATURAL AUDIO ANIMAL GAME ---
         if (state.currentGame === 'animal') {
             const animals = [
-                {n:'Lion', s:'Roar', e:'🦁'}, {n:'Elephant', s:'Pawoo', e:'🐘'},
-                {n:'Chicken', s:'Bawk-bawk', e:'🐔'}, {n:'Monkey', s:'Ooh ooh aah aah', e:'🐒'},
-                {n:'Sheep', s:'Baaa', e:'🐑'}, {n:'Frog', s:'Ribbit', e:'🐸'},
-                {n:'Bee', s:'Buzzzz', e:'🐝'}, {n:'Owl', s:'Hoot Hoot', e:'🦉'}
+                {n:'Lion', s:'https://www.soundjay.com/nature/sounds/lion-roar-01.mp3', e:'🦁'}, 
+                {n:'Elephant', s:'https://assets.mixkit.co/active_storage/sfx/2242/2242-84.wav', e:'🐘'},
+                {n:'Chicken', s:'https://www.soundjay.com/nature/sounds/chicken-rooster-01.mp3', e:'🐔'}, 
+                {n:'Monkey', s:'https://assets.mixkit.co/active_storage/sfx/2241/2241-84.wav', e:'🐒'},
+                {n:'Sheep', s:'https://www.soundjay.com/nature/sounds/sheep-01.mp3', e:'🐑'}, 
+                {n:'Frog', s:'https://www.soundjay.com/nature/sounds/frog-croaking-02.mp3', e:'🐸'},
+                {n:'Bee', s:'https://assets.mixkit.co/active_storage/sfx/2243/2243-84.wav', e:'🐝'}, 
+                {n:'Owl', s:'https://assets.mixkit.co/active_storage/sfx/1110/1110-84.wav', e:'🦉'}
             ];
             let pick = animals[Math.floor(Math.random() * animals.length)];
             state.correctAnswer = pick; 
             state.currentAnimalSound = pick.s;
             
             q.innerText = `Which animal makes this sound?`;
-            speak(pick.s);
+            playRealAnimalSound(pick.s);
             
-            area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound)">🔊 Hear Sound Again</button><br>`;
+            // Repeat sound button points directly to the real clip player function
+            area.innerHTML += `<button class="sound-repeat-btn" onclick="playRealAnimalSound(state.currentAnimalSound)">🔊 Hear Sound Again</button><br>`;
             
             let choices = [...animals].sort(() => 0.5 - Math.random()).slice(0, 4);
             if (!choices.find(a => a.n === pick.n)) choices[0] = pick;
@@ -186,7 +206,7 @@
             area.innerHTML += buttonsContainer;
         }
 
-        // --- FRUIT COLOR GAME ---
+        // --- UPDATED FRUIT COLOR GAME ---
         else if (state.currentGame === 'color') {
             const fruits = [
                 {n:'Apple', v:'#ff4d4d', e:'🍎', c:'Red'}, 
@@ -213,7 +233,7 @@
             });
         }
 
-        // --- MEMORY GAME ---
+        // --- FIXED MEMORY GAME ---
         else if (state.currentGame === 'memory') {
             q.innerText = "Match the Pairs!";
             const pool = ['🐶','🍎','⭐','🤖','🐸','🎈','🍭','🦁'];
@@ -227,7 +247,7 @@
             area.innerHTML = grid + `</div>`;
         }
 
-        // --- SHAPE GAME ---
+        // SHAPE, MATH, COUNT (No changes to UI)
         else if (state.currentGame === 'shape') {
             const shapes = [{n:'Circle', c:'s-circle'}, {n:'Square', c:'s-square'}, {n:'Triangle', c:'s-triangle'}, {n:'Diamond', c:'s-diamond'}, {n:'Rectangle', c:'s-rectangle'}, {n:'Oval', c:'s-oval'}, {n:'Pentagon', c:'s-pentagon'}];
             let pick = shapes[Math.floor(Math.random() * shapes.length)];
@@ -239,29 +259,14 @@
             choices.sort(() => 0.5 - Math.random()).forEach(s => { html += `<div class="shape ${s.c}" onclick="handleResult('${s.n}'==='${pick.n}')"></div>`; });
             area.innerHTML = html + `</div>`;
         }
-
-        // --- MATH GAME (MODIFIED FOR 1-5 MULTIPLICATION) ---
         else if (state.currentGame === 'math') {
-            // Alternates randomly between addition and 1-5 multiplication
-            let isMultiplication = Math.random() < 0.5;
-
-            if (isMultiplication) {
-                let n1 = Math.floor(Math.random() * 5) + 1; // 1 to 5
-                let n2 = Math.floor(Math.random() * 5) + 1; // 1 to 5
-                state.correctAnswer = n1 * n2;
-                q.innerText = `${n1} × ${n2} = ?`;
-            } else {
-                let n1 = Math.floor(Math.random() * (state.level * 5)) + 1;
-                let n2 = Math.floor(Math.random() * (state.level * 5)) + 1;
-                state.correctAnswer = n1 + n2;
-                q.innerText = `${n1} + ${n2} = ?`;
-            }
-
+            let n1 = Math.floor(Math.random() * (state.level * 5)) + 1;
+            let n2 = Math.floor(Math.random() * (state.level * 5)) + 1;
+            state.correctAnswer = n1 + n2;
+            q.innerText = `${n1} + ${n2} = ?`;
             area.innerHTML = `<input type="number" id="math-ans" style="width:100px; padding:15px; font-size:24px; border-radius:15px; border:3px solid #ddd; outline:none;"><br><button onclick="checkMath()">Check!</button>`;
             document.getElementById('math-ans').focus();
         }
-
-        // --- COUNTING GAME ---
         else if (state.currentGame === 'count') {
             let num = Math.floor(Math.random() * 9) + 1;
             state.correctAnswer = num;
@@ -275,6 +280,8 @@
     function flip(i, icon) {
         if (isProcessing) return;
         let el = document.getElementById('c'+i);
+        
+        // Prevent clicking already matched or flipped cards
         if (el.style.color === 'white') return;
 
         el.style.color = 'white'; 
@@ -286,18 +293,21 @@
         if (flipped.length === 2) {
             isProcessing = true;
             if (flipped[0].icon === flipped[1].icon) {
+                // MATCHED
                 state.score += 10;
                 updateHUD();
                 document.getElementById('feedback').innerHTML = "✨ Match! ✨";
                 flipped = [];
                 isProcessing = false;
                 
+                // Check if all matched (simplified check)
                 const all = document.querySelectorAll('[id^="c"]');
                 const matched = Array.from(all).filter(card => card.style.color === 'white');
                 if (matched.length === all.length) {
                     setTimeout(nextQuestion, 1500);
                 }
             } else {
+                // NOT A MATCH
                 setTimeout(() => {
                     flipped.forEach(f => {
                         let card = document.getElementById('c'+f.i);
@@ -317,6 +327,7 @@
         handleResult(val === state.correctAnswer);
     }
 
+    // --- NEW SEPARATE HANDLER FOR ANIMAL SUCCESS DISPLAY ---
     function handleAnimalResult(isCorrect) {
         const fb = document.getElementById('feedback');
         const area = document.getElementById('action-area');
@@ -327,6 +338,7 @@
             document.getElementById('game-board').classList.add('correct-anim');
             setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
             
+            // Display the clear winner's portrait card dynamically before sweeping to the next round
             area.innerHTML = `
                 <div style="margin: 20px auto; padding: 20px; background: #fff; border-radius: 20px; border: 4px dashed var(--success); max-width: 200px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                     <div style="font-size: 80px; line-height: 1;">${state.correctAnswer.e}</div>
@@ -334,7 +346,7 @@
                 </div>
             `;
             speak(state.correctAnswer.n);
-            setTimeout(nextQuestion, 2500); 
+            setTimeout(nextQuestion, 2500); // Gives 2.5 seconds to read and see the animal card
         } else {
             fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
             state.lives--;
@@ -365,6 +377,9 @@
         const music = document.getElementById('bgMusic');
         music.pause();
         music.currentTime = 0;
+
+        // Make sure running animal audio tracks stop playing if the game ends
+        document.getElementById('animalAudioPlayer').pause();
 
         if(state.score > state.highScore) {
             state.highScore = state.score;

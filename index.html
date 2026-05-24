@@ -15,6 +15,7 @@
             font-family: 'Quicksand', sans-serif;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             min-height: 100vh; margin: 0; display: flex; flex-direction: column; align-items: center;
+            user-select: none;
         }
 
         .game-container {
@@ -68,10 +69,25 @@
 
         /* --- Sound Button Style --- */
         .sound-repeat-btn {
-            background: #ffeaa7; color: #d63031; box-shadow: 0 5px 0px #chi-color, #e1b12c;
+            background: #ffeaa7; color: #d63031; box-shadow: 0 5px 0px #e1b12c;
             font-size: 1.1rem; padding: 10px 20px; border-radius: 50px; margin-bottom: 15px;
         }
-        .sound-repeat-btn:active { box-shadow: 0 1px 0px #e1b12c; }
+        .sound-repeat-btn:active { transform: translateY(4px); box-shadow: 0 1px 0px #e1b12c; }
+
+        /* --- Tracing Game Specific Styles --- */
+        .color-container { margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: #006064; }
+        #colorPicker { border: none; background: transparent; width: 40px; height: 40px; cursor: pointer; vertical-align: middle; }
+        .wrap { position: relative; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-radius: 20px; background: white; padding: 10px; margin: 10px auto; }
+        canvas { border: 4px dashed #00838f; background: transparent; border-radius: 15px; touch-action: none; display: block; }
+        .guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 260px; font-weight: bold; color: rgba(0, 0, 0, 0.07); pointer-events: none; font-family: Arial, sans-serif; }
+        .tracing-controls { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+        .clear { background: #ff7675; color: white; box-shadow: 0 5px 0px #c0392b; }
+        .clear:active { box-shadow: 0 1px 0px #c0392b; }
+        .done { background: #00cec9; color: white; box-shadow: 0 5px 0px #0097e6; }
+        .done:active { box-shadow: 0 1px 0px #0097e6; }
+        .next { background: #2ecc71; color: white; box-shadow: 0 5px 0px #27ae60; }
+        .next:active { box-shadow: 0 1px 0px #27ae60; }
+        .stars-display { font-size: 35px; height: 45px; color: gold; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -88,16 +104,17 @@
             <button onclick="startGame('animal')">🦁 Animals</button>
             <button onclick="startGame('shape')">🔷 Shapes</button>
             <button onclick="startGame('memory')">🧠 Memory</button>
+            <button onclick="startGame('tracing')" style="grid-column: span 2; background: #e67e22; box-shadow: 0 5px 0px #d35400;">✏️ Number Tracing</button>
         </div>
     </div>
 
     <div id="game-board" class="game-container hidden">
         <div class="stats-bar">
-            <span>❤️ <span id="lives">3</span></span>
+            <span id="life-box">❤️ <span id="lives">3</span></span>
             <span id="game-title">GAME</span>
             <span>⭐ <span id="score">0</span></span>
         </div>
-        <h2 id="question" style="color: #2d3436; min-height: 60px;">Question?</h2>
+        <h2 id="question" style="color: #2d3436; min-height: 60px; margin-bottom: 10px;">Question?</h2>
         <div id="action-area"></div>
         <div id="feedback" style="height: 40px; margin: 15px; font-weight: bold; font-size: 1.5rem;"></div>
         <button style="background:#b2bec3; box-shadow:0 5px 0 #636e72" onclick="endGame()">Stop Playing</button>
@@ -112,11 +129,19 @@
         score: 0, lives: 3, level: 1, 
         highScore: parseInt(localStorage.getItem('kidsHS')) || 0,
         currentGame: '', correctAnswer: null,
-        currentAnimalSound: '' // Keeps track of sound string to repeat
+        currentAnimalSound: '' 
     };
 
     let flipped = [];
     let isProcessing = false;
+
+    // Tracing Game States
+    let drawing = false;
+    let rawPointsCount = 0;
+    let numberDone = false;
+    const tracingNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    let tracingIndex = 0;
+    let canvas, ctx;
 
     function updateHUD() {
         document.getElementById('score').innerText = state.score;
@@ -128,11 +153,20 @@
 
     function speak(text) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Stop current speech
+            window.speechSynthesis.cancel(); 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 0.9;
             utterance.pitch = 1.2;
             window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function speakNumberAssist(num) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            let msg = new SpeechSynthesisUtterance("Trace the number " + num);
+            msg.rate = 0.9;
+            speechSynthesis.speak(msg);
         }
     }
 
@@ -143,7 +177,14 @@
         document.getElementById('game-board').classList.remove('hidden');
         document.getElementById('game-title').innerText = type.toUpperCase();
         
-        // Start Background Music
+        // Hide standard hearts display if running the tracing game module
+        if (type === 'tracing') {
+            document.getElementById('life-box').style.visibility = 'hidden';
+            tracingIndex = 0;
+        } else {
+            document.getElementById('life-box').style.visibility = 'visible';
+        }
+
         const music = document.getElementById('bgMusic');
         music.volume = 0.2;
         music.play().catch(() => console.log("Music needs user interaction first"));
@@ -159,7 +200,7 @@
         flipped = [];
         isProcessing = false;
 
-        // --- UPDATED ANIMAL GAME ---
+        // --- ANIMAL GAME ---
         if (state.currentGame === 'animal') {
             const animals = [
                 {n:'Lion', s:'Roar', e:'🦁'}, {n:'Elephant', s:'Pawoo', e:'🐘'},
@@ -168,13 +209,12 @@
                 {n:'Bee', s:'Buzzzz', e:'🐝'}, {n:'Owl', s:'Hoot Hoot', e:'🦉'}
             ];
             let pick = animals[Math.floor(Math.random() * animals.length)];
-            state.correctAnswer = pick; // Save the full object instead of just the name string
+            state.correctAnswer = pick; 
             state.currentAnimalSound = pick.s;
             
             q.innerText = `Which animal makes this sound?`;
             speak(pick.s);
             
-            // Repeat sound button
             area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound)">🔊 Hear Sound Again</button><br>`;
             
             let choices = [...animals].sort(() => 0.5 - Math.random()).slice(0, 4);
@@ -182,14 +222,13 @@
             
             let buttonsContainer = `<div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">`;
             choices.sort(() => 0.5 - Math.random()).forEach(a => {
-                // Modified button styles to make the graphics look huge, crystal clear, and scale nicely
                 buttonsContainer += `<button class="animal-btn" style="background: #ffffff; border: 4px solid var(--primary); border-radius: 25px; box-shadow: 0 6px 0 #4834D4; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" onclick="handleAnimalResult('${a.n}'==='${pick.n}')">${a.e}</button>`;
             });
             buttonsContainer += `</div>`;
             area.innerHTML += buttonsContainer;
         }
 
-        // --- UPDATED FRUIT COLOR GAME ---
+        // --- FRUIT COLOR GAME ---
         else if (state.currentGame === 'color') {
             const fruits = [
                 {n:'Apple', v:'#ff4d4d', e:'🍎', c:'Red'}, 
@@ -216,7 +255,7 @@
             });
         }
 
-        // --- FIXED MEMORY GAME ---
+        // --- MEMORY GAME ---
         else if (state.currentGame === 'memory') {
             q.innerText = "Match the Pairs!";
             const pool = ['🐶','🍎','⭐','🤖','🐸','🎈','🍭','🦁'];
@@ -230,7 +269,7 @@
             area.innerHTML = grid + `</div>`;
         }
 
-        // SHAPE, MATH, COUNT (No changes to UI)
+        // --- SHAPE GAME ---
         else if (state.currentGame === 'shape') {
             const shapes = [{n:'Circle', c:'s-circle'}, {n:'Square', c:'s-square'}, {n:'Triangle', c:'s-triangle'}, {n:'Diamond', c:'s-diamond'}, {n:'Rectangle', c:'s-rectangle'}, {n:'Oval', c:'s-oval'}, {n:'Pentagon', c:'s-pentagon'}];
             let pick = shapes[Math.floor(Math.random() * shapes.length)];
@@ -242,14 +281,28 @@
             choices.sort(() => 0.5 - Math.random()).forEach(s => { html += `<div class="shape ${s.c}" onclick="handleResult('${s.n}'==='${pick.n}')"></div>`; });
             area.innerHTML = html + `</div>`;
         }
+
+        // --- MATH GAME ---
         else if (state.currentGame === 'math') {
-            let n1 = Math.floor(Math.random() * (state.level * 5)) + 1;
-            let n2 = Math.floor(Math.random() * (state.level * 5)) + 1;
-            state.correctAnswer = n1 + n2;
-            q.innerText = `${n1} + ${n2} = ?`;
+            let isMultiplication = Math.random() < 0.5;
+
+            if (isMultiplication) {
+                let n1 = Math.floor(Math.random() * 5) + 1;
+                let n2 = Math.floor(Math.random() * 5) + 1;
+                state.correctAnswer = n1 * n2;
+                q.innerText = `${n1} × ${n2} = ?`;
+            } else {
+                let n1 = Math.floor(Math.random() * (state.level * 5)) + 1;
+                let n2 = Math.floor(Math.random() * (state.level * 5)) + 1;
+                state.correctAnswer = n1 + n2;
+                q.innerText = `${n1} + ${n2} = ?`;
+            }
+
             area.innerHTML = `<input type="number" id="math-ans" style="width:100px; padding:15px; font-size:24px; border-radius:15px; border:3px solid #ddd; outline:none;"><br><button onclick="checkMath()">Check!</button>`;
             document.getElementById('math-ans').focus();
         }
+
+        // --- COUNTING GAME ---
         else if (state.currentGame === 'count') {
             let num = Math.floor(Math.random() * 9) + 1;
             state.correctAnswer = num;
@@ -258,13 +311,144 @@
             area.innerHTML = `<div style="font-size:50px; margin:20px;">${items}</div>`;
             for(let i=1; i<=10; i++) area.innerHTML += `<button onclick="handleResult(${i}===${num})">${i}</button>`;
         }
+
+        // --- NEW INTEGRATED TRACING GAME ---
+        else if (state.currentGame === 'tracing') {
+            q.innerText = "Draw on the number!";
+            
+            // Build tracing UI elements inside action area container dynamically
+            area.innerHTML = `
+                <div class="color-container">
+                    <label for="colorPicker">🎨 Pick Crayon: </label> 
+                    <input type="color" id="colorPicker" value="#9c27b0">
+                </div>
+                <div class="wrap">
+                    <div class="guide" id="guideNumber">${tracingNumbers[tracingIndex]}</div>
+                    <canvas id="canvas" width="320" height="320"></canvas>
+                </div>
+                <div class="tracing-controls">
+                    <button class="clear" onclick="clearTracingCanvas()">🧹 Clear</button>
+                    <button class="done" id="doneBtn" onclick="checkTrace()">⭐ Done</button>
+                    <button class="next" onclick="nextTracingNumber()">➡️ Next</button>
+                </div>
+                <div class="stars-display" id="stars"></div>
+            `;
+            
+            setupTracingEngine();
+            speakNumberAssist(tracingNumbers[tracingIndex]);
+        }
     }
 
+    // --- TRACING ENGINE LOGIC ---
+    function setupTracingEngine() {
+        canvas = document.getElementById("canvas");
+        ctx = canvas.getContext("2d");
+        rawPointsCount = 0;
+        numberDone = false;
+
+        // Mouse Tracing Controllers
+        canvas.addEventListener("mousedown", (e) => {
+            if (numberDone) return;
+            drawing = true;
+            ctx.beginPath();
+            const coords = getMousePos(e);
+            ctx.moveTo(coords.x, coords.y);
+        });
+        canvas.addEventListener("mouseup", () => drawing = false);
+        canvas.addEventListener("mouseleave", () => drawing = false);
+        canvas.addEventListener("mousemove", (e) => {
+            if (!drawing || numberDone) return;
+            const coords = getMousePos(e);
+            drawStroke(coords.x, coords.y);
+        });
+
+        // Touch Device Tracing Controllers
+        canvas.addEventListener("touchstart", (e) => {
+            if (numberDone) return;
+            drawing = true;
+            ctx.beginPath();
+            const coords = getTouchPos(e);
+            ctx.moveTo(coords.x, coords.y);
+            e.preventDefault();
+        }, { passive: false });
+        canvas.addEventListener("touchend", () => drawing = false);
+        canvas.addEventListener("touchmove", (e) => {
+            if (!drawing || numberDone) return;
+            const coords = getTouchPos(e);
+            drawStroke(coords.x, coords.y);
+            e.preventDefault();
+        }, { passive: false });
+    }
+
+    function getMousePos(e) { return { x: e.offsetX, y: e.offsetY }; }
+    function getTouchPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+    }
+
+    function drawStroke(x, y) {
+        ctx.strokeStyle = document.getElementById("colorPicker").value;
+        ctx.lineWidth = 14; 
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        rawPointsCount++;
+    }
+
+    function clearTracingCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        rawPointsCount = 0;
+        numberDone = false;
+        document.getElementById("doneBtn").disabled = false;
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("stars").innerText = "";
+    }
+
+    function checkTrace() {
+        if (numberDone || rawPointsCount === 0) return;
+
+        let scoreCalculated = Math.min(100, Math.floor(rawPointsCount * 1.6));
+        
+        if(scoreCalculated < 25) {
+            document.getElementById("feedback").innerText = "Keep tracing to finish!";
+            return;
+        }
+
+        let starCount = 1;
+        if (scoreCalculated > 85) starCount = 5;
+        else if (scoreCalculated > 65) starCount = 4;
+        else if (scoreCalculated > 45) starCount = 3;
+        else if (scoreCalculated > 30) starCount = 2;
+
+        let stars = "⭐".repeat(starCount);
+        document.getElementById("stars").innerText = stars;
+
+        // Award matching score directly to standard gameplay points loop
+        state.score += scoreCalculated;
+        updateHUD();
+
+        numberDone = true;
+        document.getElementById("doneBtn").disabled = true;
+
+        if ('speechSynthesis' in window) {
+            let feedbackText = scoreCalculated > 60 ? "Super job!" : "Way to try! Let's hit the next one.";
+            let msg = new SpeechSynthesisUtterance(feedbackText);
+            speechSynthesis.speak(msg);
+        }
+        document.getElementById("feedback").innerHTML = `<span style='color:var(--success)'>Score: +${scoreCalculated}</span>`;
+    }
+
+    function nextTracingNumber() {
+        tracingIndex = (tracingIndex + 1) % tracingNumbers.length;
+        nextQuestion();
+    }
+
+    // --- STANDARD SYSTEM LOGICS ---
     function flip(i, icon) {
         if (isProcessing) return;
         let el = document.getElementById('c'+i);
-        
-        // Prevent clicking already matched or flipped cards
         if (el.style.color === 'white') return;
 
         el.style.color = 'white'; 
@@ -276,21 +460,18 @@
         if (flipped.length === 2) {
             isProcessing = true;
             if (flipped[0].icon === flipped[1].icon) {
-                // MATCHED
                 state.score += 10;
                 updateHUD();
                 document.getElementById('feedback').innerHTML = "✨ Match! ✨";
                 flipped = [];
                 isProcessing = false;
                 
-                // Check if all matched (simplified check)
                 const all = document.querySelectorAll('[id^="c"]');
                 const matched = Array.from(all).filter(card => card.style.color === 'white');
                 if (matched.length === all.length) {
                     setTimeout(nextQuestion, 1500);
                 }
             } else {
-                // NOT A MATCH
                 setTimeout(() => {
                     flipped.forEach(f => {
                         let card = document.getElementById('c'+f.i);
@@ -310,7 +491,6 @@
         handleResult(val === state.correctAnswer);
     }
 
-    // --- NEW SEPARATE HANDLER FOR ANIMAL SUCCESS DISPLAY ---
     function handleAnimalResult(isCorrect) {
         const fb = document.getElementById('feedback');
         const area = document.getElementById('action-area');
@@ -321,7 +501,6 @@
             document.getElementById('game-board').classList.add('correct-anim');
             setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
             
-            // Display the clear winner's portrait card dynamically before sweeping to the next round
             area.innerHTML = `
                 <div style="margin: 20px auto; padding: 20px; background: #fff; border-radius: 20px; border: 4px dashed var(--success); max-width: 200px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                     <div style="font-size: 80px; line-height: 1;">${state.correctAnswer.e}</div>
@@ -329,7 +508,7 @@
                 </div>
             `;
             speak(state.correctAnswer.n);
-            setTimeout(nextQuestion, 2500); // Gives 2.5 seconds to read and see the animal card
+            setTimeout(nextQuestion, 2500); 
         } else {
             fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
             state.lives--;
@@ -360,6 +539,8 @@
         const music = document.getElementById('bgMusic');
         music.pause();
         music.currentTime = 0;
+
+        document.getElementById('life-box').style.visibility = 'visible';
 
         if(state.score > state.highScore) {
             state.highScore = state.score;

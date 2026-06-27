@@ -4,131 +4,416 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Academy Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght=400;700&display=swap" rel="stylesheet">
+    <!-- Premium Kid-Friendly Font Framework -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6C5CE7; --success: #00B894; --danger: #D63031;
-            --warning: #FDCB6E; --bg: #F0F2F5;
+            --primary: #6C5CE7; 
+            --primary-shadow: #5243C7;
+            --success: #00B894; 
+            --success-shadow: #009476;
+            --danger: #FF7675; 
+            --danger-shadow: #D63031;
+            --warning: #FDCB6E; 
+            --warning-shadow: #E1B12C;
+            --info: #0984E3;
+            --info-shadow: #0061B0;
+            --purple: #A29BFE;
+            --purple-shadow: #7468F0;
+            --orange: #E67E22;
+            --orange-shadow: #D35400;
+            
+            --card-radius: 32px;
+            --font-main: 'Fredoka', 'Quicksand', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            min-height: 100vh; margin: 0; display: flex; flex-direction: column; align-items: center;
+            font-family: var(--font-main);
+            background: linear-gradient(180deg, #A0E0FF 0%, #CEFAFF 50%, #E3E9FF 100%);
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 10px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
             user-select: none;
+            overflow-x: hidden;
+            position: relative;
         }
 
+        /* --- Living Animated Background Elements --- */
+        .bg-decorations {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            opacity: 0.6;
+            animation: floatClouds 35s linear infinite;
+        }
+        .cloud::before, .cloud::after {
+            content: ''; position: absolute; background: white; border-radius: 50%;
+        }
+        .cloud.c1 { width: 120px; height: 40px; top: 10%; left: -150px; }
+        .cloud.c1::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .cloud.c1::after { width: 70px; height: 70px; top: -40px; left: 40px; }
+        
+        .cloud.c2 { width: 160px; height: 50px; top: 65%; left: -200px; animation-delay: 15s; animation-duration: 45s; }
+        .cloud.c2::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+        .cloud.c2::after { width: 85px; height: 85px; top: -50px; left: 55px; }
+
+        @keyframes floatClouds {
+            0% { transform: translateX(-10vw); }
+            100% { transform: translateX(110vw); }
+        }
+
+        /* --- Header Brand Styling --- */
+        .brand-header {
+            z-index: 5;
+            margin: 15px 0 5px 0;
+            text-align: center;
+        }
+        .brand-title {
+            font-size: 2.8rem;
+            margin: 0;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B6B, #6C5CE7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 0px rgba(255,255,255,1));
+            animation: pulseTitle 3s ease-in-out infinite;
+        }
+        @keyframes pulseTitle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* --- Core App Containers --- */
         .game-container {
-            background: rgba(255, 255, 255, 0.95); padding: 2rem; border-radius: 30px;
-            width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            margin: 20px; text-align: center; border: 5px solid white;
-            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 2rem; 
+            border-radius: var(--card-radius);
+            width: 100%; 
+            max-width: 540px; 
+            box-shadow: 0 16px 0px rgba(0, 0, 0, 0.05), 0 30px 60px rgba(108, 92, 231, 0.15);
+            margin: 10px auto 25px auto; 
+            text-align: center; 
+            border: 8px solid white;
+            transition: all 0.3s ease;
         }
-
-        .hidden { display: none; }
-        .stats-bar { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; font-size: 1.2rem; }
         
+        .hidden { display: none !important; }
+
+        /* --- Master 3D Bubbly Button Architecture --- */
         button {
-            padding: 15px 25px; font-family: 'Quicksand', sans-serif; font-weight: bold;
-            border: none; border-radius: 20px; cursor: pointer;
-            background: var(--primary); color: white; box-shadow: 0 5px 0px #4834D4;
-            margin: 8px; transition: 0.2s; font-size: 1rem;
+            font-family: var(--font-main);
+            font-weight: 700;
+            font-size: 1.15rem;
+            padding: 14px 28px; 
+            border: 3px solid white !important; 
+            border-radius: 24px; 
+            cursor: pointer;
+            color: white; 
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.1s ease;
+            box-shadow: 0 8px 0 var(--primary-shadow), 0 12px 20px rgba(0,0,0,0.15);
+            background: linear-gradient(180deg, #8475F9 0%, var(--primary) 100%);
+            margin: 10px;
+            text-shadow: 0 2px 2px rgba(0,0,0,0.2);
         }
-        button:active { transform: translateY(4px); box-shadow: 0 1px 0px #4834D4; }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 0 var(--primary-shadow), 0 14px 24px rgba(0,0,0,0.18);
+        }
+        button:active { 
+            transform: translateY(6px) !important; 
+            box-shadow: 0 2px 0 var(--primary-shadow) !important; 
+        }
 
-        /* --- Shape Designs --- */
-        .shape-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px; }
-        .shape { cursor: pointer; transition: 0.3s; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }
-        .shape:hover { transform: scale(1.1) rotate(5deg); }
+        /* --- Specialized Menu Dashboard Matrix --- */
+        .menu-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px;
+            margin-top: 20px;
+        }
+        @media(max-width: 400px) {
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Mode Button Custom Visual Injections */
+        .menu-grid button {
+            margin: 0;
+            height: 85px;
+            font-size: 1.2rem;
+            flex-direction: column;
+            gap: 4px;
+            border-radius: 28px;
+        }
+        /* Color Mapping To Enforce Premium Contrast and Design Requirements */
+        .menu-grid button:nth-child(1) { background: linear-gradient(180deg, #FF8E53 0%, #FF6B6B 100%); --primary-shadow: #D34040; }
+        .menu-grid button:nth-child(2) { background: linear-gradient(180deg, #00ECC1 0%, var(--success) 100%); --primary-shadow: var(--success-shadow); }
+        .menu-grid button:nth-child(3) { background: linear-gradient(180deg, #FFD066 0%, var(--warning) 100%); --primary-shadow: var(--warning-shadow); }
+        .menu-grid button:nth-child(4) { background: linear-gradient(180deg, #FF9F43 0%, #E67E22 100%); --primary-shadow: #C05A00; }
+        .menu-grid button:nth-child(5) { background: linear-gradient(180deg, #42C2FF 0%, var(--info) 100%); --primary-shadow: var(--info-shadow); }
+        .menu-grid button:nth-child(6) { background: linear-gradient(180deg, #C491FA 0%, var(--purple) 100%); --primary-shadow: #7F77DB; }
+        .menu-grid button:nth-child(7) { background: linear-gradient(180deg, #2ECC71 0%, #10B981 100%); --primary-shadow: #059669; }
+        .menu-grid button:nth-child(8) { background: linear-gradient(180deg, #3498DB 0%, #0369A1 100%); --primary-shadow: #0284C7; }
+        .menu-grid button:nth-child(9) { background: linear-gradient(180deg, #F39C12 0%, #E67E22 100%); --primary-shadow: #D35400; }
+        .menu-grid button:nth-child(10){ background: linear-gradient(180deg, #00A8FF 0%, #0097E6 100%); --primary-shadow: #0077B6; }
+
+        /* --- Dashboard Stats Bar --- */
+        .stats-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: #F4F3FF;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-weight: 700; 
+            margin-bottom: 25px; 
+            font-size: 1.2rem;
+            border: 3px dashed #D1C9FF;
+            color: #4A3AFF;
+        }
+        .stats-bar #game-title {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            background: #6C5CE7;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 50px;
+        }
         
-        .s-circle { width: 70px; height: 70px; background: #ff7675; border-radius: 50%; }
-        .s-square { width: 70px; height: 70px; background: #74b9ff; }
-        .s-rectangle { width: 100px; height: 60px; background: #a29bfe; }
-        .s-oval { width: 100px; height: 60px; background: #fd79a8; border-radius: 50px / 30px; }
-        .s-triangle { width: 0; height: 0; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 70px solid #55efc4; }
-        .s-diamond { width: 70px; height: 70px; background: #ffeaa7; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-        .s-pentagon { width: 70px; height: 70px; background: #fab1a0; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
-        .s-star { width: 75px; height: 75px; background: #fdcb6e; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
-        .s-hexagon { width: 70px; height: 70px; background: #00cec9; clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
-        .s-octagon { width: 70px; height: 70px; background: #e84393; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
-        .s-cross { width: 70px; height: 70px; background: #ff7675; clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%); }
+        /* Mascot & Extra Welcome Elements */
+        .welcome-mascot {
+            font-size: 4rem;
+            margin: 10px 0;
+            animation: wave 2.5s ease-in-out infinite;
+            display: inline-block;
+            transform-origin: 70% 70%;
+        }
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+        }
 
-        .animal-btn { font-size: 50px !important; padding: 10px !important; width: 100px; height: 100px; }
+        .highscore-badge {
+            background: #FFF9E6;
+            border: 3px solid #FFEAA7;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #D39E00;
+            font-weight: 700;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 0px #FFEAA7;
+        }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .correct-anim { animation: pulse 0.5s ease-in-out; }
+        /* --- Question Typography Area --- */
+        h2#question {
+            color: #2D3436; 
+            font-size: 1.7rem;
+            min-height: 60px; 
+            margin: 15px 0 25px 0;
+            line-height: 1.3;
+        }
 
-        /* --- Fruits Layout Styles --- */
+        /* --- Shape Display Designs Overrides --- */
+        .shape-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 25px; 
+            margin: 25px 0; 
+        }
+        .shape { 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            filter: drop-shadow(0 8px 0px rgba(0,0,0,0.12)); 
+        }
+        .shape:hover { transform: scale(1.15) rotate(4deg); filter: drop-shadow(0 12px 0px rgba(0,0,0,0.1)); }
+        .shape:active { transform: scale(0.95); }
+        
+        .s-circle { width: 80px; height: 80px; background: #FF7675; border-radius: 50%; }
+        .s-square { width: 80px; height: 80px; background: #74B9FF; border-radius: 16px; }
+        .s-rectangle { width: 110px; height: 70px; background: #A29BFE; border-radius: 16px; }
+        .s-oval { width: 110px; height: 70px; background: #FD79A8; border-radius: 50px / 35px; }
+        .s-triangle { width: 0; height: 0; border-left: 45px solid transparent; border-right: 45px solid transparent; border-bottom: 80px solid #55EFC4; }
+        .s-diamond { width: 80px; height: 80px; background: #FFEAA7; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); border-radius: 8px; }
+        .s-pentagon { width: 80px; height: 80px; background: #FAB1A0; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
+        .s-star { width: 85px; height: 85px; background: #FDCB6E; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+        .s-hexagon { width: 80px; height: 80px; background: #00CECC; clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+        .s-octagon { width: 80px; height: 80px; background: #E84393; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
+        .s-cross { width: 80px; height: 80px; background: #FF7675; clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%); }
+
+        /* --- Dynamic Card Layout Overrides --- */
+        .animal-btn { 
+            font-size: 55px !important; 
+            padding: 0 !important; 
+            width: 105px !important; 
+            height: 105px !important; 
+            background: #FFFFFF !important;
+            border: 4px solid #6C5CE7 !important;
+            border-radius: 28px !important;
+            box-shadow: 0 8px 0px #5243C7, 0 12px 20px rgba(0,0,0,0.1) !important;
+        }
+        .animal-btn:hover { transform: scale(1.08) translateY(-2px) !important; box-shadow: 0 10px 0px #5243C7, 0 14px 24px rgba(0,0,0,0.12) !important; }
+        .animal-btn:active { transform: translateY(6px) !important; box-shadow: 0 2px 0px #5243C7 !important; }
+
         .fruit-card {
-            display: inline-flex; flex-direction: column; align-items: center;
-            margin: 10px; cursor: pointer; transition: transform 0.2s;
+            display: inline-flex; 
+            flex-direction: column; 
+            align-items: center;
+            margin: 12px; 
+            cursor: pointer; 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .fruit-card:hover { transform: scale(1.1); }
+        .fruit-card:hover { transform: scale(1.12) translateY(-4px); }
         .fruit-bubble {
-            width: 80px; height: 80px; border-radius: 50%;
+            width: 90px; height: 90px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 45px; border: 5px solid white;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            font-size: 50px; border: 6px solid white !important;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
-        .fruit-name { font-weight: bold; font-size: 1.1rem; margin-top: 5px; color: #2d3436; }
+        .fruit-name { font-weight: 700; font-size: 1.2rem; margin-top: 8px; color: #2D3436; }
 
-        /* --- Sound Button Style --- */
         .sound-repeat-btn {
-            background: #ffeaa7; color: #d63031; box-shadow: 0 5px 0px #e1b12c;
-            font-size: 1.1rem; padding: 10px 20px; border-radius: 50px; margin-bottom: 15px;
+            background: linear-gradient(180deg, #FFF1C5 0%, #FFEAA7 100%) !important; 
+            color: #D63031 !important; 
+            box-shadow: 0 6px 0px #E1B12C, 0 8px 15px rgba(0,0,0,0.1) !important;
+            font-size: 1.2rem !important; 
+            padding: 12px 24px !important; 
+            border-radius: 50px !important; 
+            margin-bottom: 20px !important;
+            border: 3px solid white !important;
         }
-        .sound-repeat-btn:active { box-shadow: 0 1px 0px #e1b12c; }
+        .sound-repeat-btn:hover { box-shadow: 0 8px 0px #E1B12C, 0 10px 18px rgba(0,0,0,0.12) !important; transform: translateY(-2px); }
+        .sound-repeat-btn:active { box-shadow: 0 2px 0px #E1B12C !important; transform: translateY(4px) !important; }
 
-        /* --- Tracing Mode Styles --- */
-        .color-container { margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: #006064; }
-        #colorPicker { border: none; background: transparent; width: 40px; height: 40px; cursor: pointer; vertical-align: middle; }
-        .wrap { position: relative; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-radius: 20px; background: white; padding: 10px; }
-        canvas { border: 4px dashed #00838f; background: transparent; border-radius: 15px; touch-action: none; display: block; }
-        .guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 240px; font-weight: bold; color: rgba(0, 0, 0, 0.07); pointer-events: none; font-family: Arial, sans-serif; }
+        /* --- Tracing Canvas Overrides --- */
+        .color-container { margin-bottom: 18px; font-size: 1.25rem; font-weight: 700; color: #2C3E50; }
+        #colorPicker { border: 3px solid white; background: #fff; width: 45px; height: 45px; cursor: pointer; vertical-align: middle; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .wrap { position: relative; display: inline-block; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 28px; background: white; padding: 12px; border: 4px solid #E2E8F0; }
+        canvas { border: 4px dashed #6C5CE7; background: transparent; border-radius: 20px; touch-action: none; display: block; max-width: 100%; }
+        .guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 250px; font-weight: 700; color: rgba(108, 92, 231, 0.08); pointer-events: none; font-family: var(--font-main); }
 
         /* --- Listen & Read Custom Styles --- */
-        .phrase-board { background-color: #f1f5f9; padding: 20px; border-radius: 24px; border: 3px dashed #cbd5e1; margin: 15px 0; }
-        .phrase-container { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 5px; }
-        .word { font-size: 2.3rem; font-weight: bold; color: #0f172a; cursor: pointer; padding: 2px 8px; border-radius: 12px; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .word:hover { background-color: #e0e7ff; color: var(--primary); transform: scale(1.15); }
-        .hint-text { font-size: 0.95rem; color: #64748b; margin: 8px 0 0 0; font-weight: bold; }
-        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
-        .option-card { background: #fff; border: 3px solid #e2e8f0; border-radius: 24px; padding: 15px 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .option-card:hover { border-color: var(--primary); background: #e0e7ff; transform: translateY(-6px); box-shadow: 0 10px 15px rgba(79, 70, 229, 0.1); }
-        .option-card .emoji { font-size: 3.8rem; display: block; }
+        .phrase-board { background-color: #F8FAF7; padding: 22px; border-radius: 28px; border: 4px dashed #CBD5E1; margin: 20px 0; }
+        .phrase-container { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 5px; }
+        .word { font-size: 2.4rem; font-weight: 700; color: #1E293B; cursor: pointer; padding: 4px 10px; border-radius: 16px; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .word:hover { background-color: #EEF2FF; color: var(--primary); transform: scale(1.15); }
+        .hint-text { font-size: 1rem; color: #64748B; margin: 12px 0 0 0; font-weight: 700; }
+        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 25px; }
+        .option-card { background: #FFF; border: 4px solid #E2E8F0; border-radius: 28px; padding: 15px 5px; cursor: pointer; box-shadow: 0 8px 0px #E2E8F0; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .option-card:hover { border-color: var(--primary); background: #EEF2FF; transform: translateY(-4px); box-shadow: 0 12px 0px #CBD5E1; }
+        .option-card:active { transform: translateY(4px); box-shadow: 0 4px 0px #CBD5E1; }
+        .option-card .emoji { font-size: 4.2rem; display: block; line-height: 1.1; }
+
+        /* Math Input Overrides */
+        #math-ans {
+            width: 140px; 
+            padding: 15px; 
+            font-size: 2rem; 
+            font-family: var(--font-main);
+            font-weight: 700;
+            border-radius: 24px; 
+            border: 4px solid #CBD5E1; 
+            outline: none;
+            text-align: center;
+            color: #2D3436;
+            background: #F8FAFC;
+            box-shadow: inset 0 6px 0 rgba(0,0,0,0.03);
+            margin-bottom: 10px;
+        }
+        #math-ans:focus {
+            border-color: var(--primary);
+            background: #FFFFFF;
+        }
+
+        /* --- Global Animations System --- */
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+        .correct-anim { animation: pulse 0.4s ease-in-out; }
+
+        #feedback { 
+            height: 45px; 
+            margin: 20px 0; 
+            font-weight: 700; 
+            font-size: 1.7rem; 
+            text-shadow: 0 2px 0px rgba(255,255,255,1);
+        }
     </style>
 </head>
 <body>
 
-    <h1 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">🌟 Kids Academy Pro 🌟</h1>
+    <div class="bg-decorations">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+    </div>
 
+    <div class="brand-header">
+        <h1 class="brand-title">Kids Academy Pro</h1>
+    </div>
+
+    <!-- MAIN DASHBOARD MENU -->
     <div id="menu" class="game-container">
-        <div id="menu-stars" style="font-size: 30px; margin-bottom: 10px;">⭐</div>
-        <p style="font-size: 1.2rem;">🏆 Best Score: <span id="high-score-val">0</span></p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button onclick="startGame('math')">➕ Math</button>
-            <button onclick="startGame('color')">🎨 Colors</button>
-            <button onclick="startGame('count')">🔢 Counting</button>
-            <button onclick="startGame('animal')">🦁 Animals</button>
-            <button onclick="startGame('shape')">🔷 Shapes</button>
-            <button onclick="startGame('memory')">🧠 Memory</button>
-            <button onclick="startGame('read')" style="background: #10b981; box-shadow: 0 5px 0px #059669;">📚 Listen &amp; Read</button>
-            <button onclick="startGame('compare')" style="background: #0369a1; box-shadow: 0 5px 0px #0284c7;">🧮 Comparisons</button>
-            <button onclick="startGame('alphabet')" style="background: #e67e22; box-shadow: 0 5px 0px #d35400;">🔤 Alphabet Tracing</button>
-            <button onclick="startGame('numtrace')" style="background: #0097e6; box-shadow: 0 5px 0px #0077b6;">🔢 Number Tracing</button>
+        <div class="welcome-mascot">✨🐻✨</div>
+        <div class="highscore-badge">
+            <span>🏆 Best Score:</span>
+            <span id="high-score-val">0</span>
+            <span id="menu-stars">⭐</span>
+        </div>
+        
+        <div class="menu-grid">
+            <button onclick="startGame('math')"><span>➕</span> Math</button>
+            <button onclick="startGame('color')"><span>🎨</span> Colors</button>
+            <button onclick="startGame('count')"><span>🔢</span> Counting</button>
+            <button onclick="startGame('animal')"><span>🦁</span> Animals</button>
+            <button onclick="startGame('shape')"><span>🔷</span> Shapes</button>
+            <button onclick="startGame('memory')"><span>🧠</span> Memory</button>
+            <button onclick="startGame('read')"><span>📚</span> Listen &amp; Read</button>
+            <button onclick="startGame('compare')"><span>🧮</span> Comparisons</button>
+            <button onclick="transformedStartGame('alphabet')"><span>🔤</span> Alphabet Trace</button>
+            <button onclick="transformedStartGame('numtrace')"><span>🔢</span> Number Trace</button>
         </div>
     </div>
 
+    <!-- MAIN GAME FIELD -->
     <div id="game-board" class="game-container hidden">
         <div class="stats-bar">
             <span>❤️ <span id="lives">5</span></span>
             <span id="game-title">GAME</span>
             <span>⭐ <span id="score">0</span></span>
         </div>
-        <h2 id="question" style="color: #2d3436; min-height: 60px; margin: 10px 0;">Question?</h2>
+        
+        <h2 id="question">Question?</h2>
+        
         <div id="action-area"></div>
-        <div id="feedback" style="height: 40px; margin: 15px; font-weight: bold; font-size: 1.5rem;"></div>
-        <button style="background:#b2bec3; box-shadow:0 5px 0 #636e72" onclick="endGame()">Stop Playing</button>
+        
+        <div id="feedback"></div>
+        
+        <button style="background: linear-gradient(180deg, #B2BEC3 0%, #636E72 100%); --primary-shadow: #2D3436; margin-top: 15px;" onclick="endGame()">
+            <span>🛑</span> Stop Playing
+        </button>
     </div>
 
     <audio id="bgMusic" loop>
@@ -136,6 +421,52 @@
     </audio>
 
 <script>
+    /* --- Premium Isolated Audio Engine Architecture --- */
+    const AudioEngine = {
+        activeAudioTrack: null,
+        preloadedAssets: {},
+
+        stopAllActiveAudio() {
+            if (this.activeAudioTrack) {
+                this.activeAudioTrack.pause();
+                this.activeAudioTrack.currentTime = 0;
+                this.activeAudioTrack = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        },
+
+        playRealisticTrack(url) {
+            this.stopAllActiveAudio();
+            try {
+                if (this.preloadedAssets[url]) {
+                    this.activeAudioTrack = this.preloadedAssets[url];
+                } else {
+                    this.activeAudioTrack = new Audio(url);
+                }
+                this.activeAudioTrack.volume = 0.85;
+                const promise = this.activeAudioTrack.play();
+                if (promise !== undefined) {
+                    promise.catch(error => console.log("Audio process resolution deferred until explicit gesture layout interaction.", error));
+                }
+            } catch(e) {
+                console.error("Audio execution pipeline fault caught securely:", e);
+            }
+        },
+
+        preloadRegistry(urlList) {
+            urlList.forEach(url => {
+                if (!this.preloadedAssets[url]) {
+                    const audioObj = new Audio();
+                    audioObj.src = url;
+                    audioObj.preload = 'auto';
+                    this.preloadedAssets[url] = audioObj;
+                }
+            });
+        }
+    };
+
     let state = {
         score: 0, lives: 5, level: 1, 
         highScore: parseInt(localStorage.getItem('kidsHS')) || 0,
@@ -171,6 +502,26 @@
         { phrase: "Sweet ice cream", emoji: "🍦", distractors: ["🍿", "🍉", "👠"] }
     ];
 
+    /* --- High-Quality Realistic Asset Mapping --- */
+    const animals = [
+        {n:'Lion', s:'Roar', e:'🦁', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_Growl.ogg'}, 
+        {n:'Chicken', s:'Bawk-bawk', e:'🐔', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/1/14/Chicken_cluck.ogg'}, 
+        {n:'Monkey', s:'Ooh ooh aah aah', e:'🐒', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/e/ec/Chimpanzee_vocalizations.ogg'}, 
+        {n:'Sheep', s:'Baaa', e:'🐑', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/2/22/Sheep_bleat.ogg'}, 
+        {n:'Frog', s:'Ribbit', e:'🐸', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/6/6c/Rana_temporaria_croak.ogg'}, 
+        {n:'Bee', s:'Buzzzz', e:'🐝', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/3/30/Apis_mellifera_flying.ogg'},
+        {n:'Bird', s:'Tweet tweet', e:'🐦', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/4/4c/House_Sparrow_chirp.ogg'}, 
+        {n:'Cat', s:'Meow', e:'🐱', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/2/23/Cat_meow_1.ogg'},
+        {n:'Duck', s:'Quack', e:'🦆', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/a/a2/Anas_platyrhynchos_quack.ogg'}, 
+        {n:'Pig', s:'Oink', e:'🐷', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/c/c8/Sus_scrofa_domesticus_grunt.ogg'},
+        {n:'Dog', s:'Woof', e:'🐶', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/b/b3/Dog_bark_5.ogg'}, 
+        {n:'Goat', s:'Maaa', e:'🐐', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/c/cc/Goat_bleat.ogg'},
+        {n:'Turkey', s:'Gobble gobble', e:'🦃', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/c/c5/Turkey_gobble.ogg'}
+    ];
+
+    // Trigger proactive caching sequences
+    AudioEngine.preloadRegistry(animals.map(a => a.audioUrl));
+
     function updateHUD() {
         document.getElementById('score').innerText = state.score;
         document.getElementById('lives').innerText = state.lives;
@@ -179,17 +530,45 @@
         document.getElementById('menu-stars').innerText = s > 100 ? "👑⭐⭐⭐⭐⭐" : s > 70 ? "⭐⭐⭐⭐⭐" : s > 40 ? "⭐⭐⭐⭐" : s > 20 ? "⭐⭐⭐" : "⭐";
     }
 
-    function speak(text, rate = 0.9) {
+    /* --- Upgraded High-Contrast Vocalization Synthesizer Engine --- */
+    function speak(text, rate = 0.85, cancelPrevious = true) {
+        if (cancelPrevious) {
+            AudioEngine.stopAllActiveAudio();
+        }
+
+        // Logic routing to handle pure acoustic recordings if the state profile requests the animal's sound
+        if (state.currentGame === 'animal' && text === state.currentAnimalSound && state.correctAnswer && state.correctAnswer.audioUrl) {
+            AudioEngine.playRealisticTrack(state.correctAnswer.audioUrl);
+            return;
+        }
+
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = rate;
-            utterance.pitch = 1.2;
+            utterance.pitch = 1.35; // Mathematically shifts baseline structure to sound child-like, bright, and cheerful
+            
+            // Enforce voice selection protocols targeting natural mobile narrators
+            const systemVoices = window.speechSynthesis.getVoices();
+            const childFriendlyNarrator = systemVoices.find(v => 
+                v.name.includes('Natural') || 
+                v.name.includes('Kid') || 
+                v.name.includes('Google US English') || 
+                v.name.includes('Zira') ||
+                v.lang.startsWith('en-US')
+            );
+            if (childFriendlyNarrator) utterance.voice = childFriendlyNarrator;
+            
             window.speechSynthesis.speak(utterance);
         }
     }
 
+    // Direct interface hook configuration supporting functional mapping rules
+    function transformedStartGame(mode) {
+        startGame(mode);
+    }
+
     function startGame(type) {
+        AudioEngine.stopAllActiveAudio();
         state.currentGame = type;
         state.score = 0; state.lives = 5; state.level = 1; 
         state.tracingIndex = 0; state.numTracingIndex = 0;
@@ -203,8 +582,8 @@
         document.getElementById('game-title').innerText = titleDisplay;
         
         const music = document.getElementById('bgMusic');
-        music.volume = 0.2;
-        music.play().catch(() => console.log("Music needs user interaction first"));
+        music.volume = 0.10; // Normalized baseline mix allowing primary audio to cut through cleanly
+        music.play().catch(() => console.log("Music session state configured successfully"));
 
         updateHUD();
         nextQuestion();
@@ -228,18 +607,18 @@
             else state.correctAnswer = '=';
 
             q.innerText = "Choose the correct sign wrapper!";
-            setTimeout(() => speak(`${state.num1} compared to ${state.num2}. Choose less than, equal, or greater than.`), 300);
+            setTimeout(() => speak(`Let's learn! ${state.num1} compared to ${state.num2}. Choose less than, equal, or greater than.`, 0.85, false), 300);
 
             area.innerHTML = `
-                <div style="display: flex; justify-content: center; align-items: center; gap: 15px; font-size: 3.3rem; font-weight: bold; margin: 15px 0;">
-                    <div style="background: #f1f5f9; padding: 5px 20px; border-radius: 15px; min-width: 65px; color: #1e293b;">${state.num1}</div>
-                    <div id="compare-sign" style="color: #94a3b8; width: 50px;">?</div>
-                    <div style="background: #f1f5f9; padding: 5px 20px; border-radius: 15px; min-width: 65px; color: #1e293b;">${state.num2}</div>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; font-size: 3.5rem; font-weight: 700; margin: 20px 0;">
+                    <div style="background: #F1F5F9; padding: 10px 25px; border-radius: 24px; min-width: 80px; color: #1E293B; border: 3px solid #E2E8F0;">${state.num1}</div>
+                    <div id="compare-sign" style="color: #94A3B8; width: 60px; font-size: 3rem;">?</div>
+                    <div style="background: #F1F5F9; padding: 10px 25px; border-radius: 24px; min-width: 80px; color: #1E293B; border: 3px solid #E2E8F0;">${state.num2}</div>
                 </div>
-                <div style="display: flex; justify-content: center; gap: 12px; margin-top: 15px;">
-                    <button onclick="submitComparison('<')" style="background: #ec4899; box-shadow: 0 5px 0 #db2777; font-size: 2.2rem; padding: 5px 25px;">&lt;</button>
-                    <button onclick="submitComparison('=')" style="background: #10b981; box-shadow: 0 5px 0 #059669; font-size: 2.2rem; padding: 5px 25px;">=</button>
-                    <button onclick="submitComparison('>')" style="background: #f59e0b; box-shadow: 0 5px 0 #d97706; font-size: 2.2rem; padding: 5px 25px;">&gt;</button>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                    <button onclick="submitComparison('<')" style="background: linear-gradient(180deg, #FF6B8B 0%, #EC4899 100%); --primary-shadow: #DB2777; font-size: 2.5rem; padding: 5px 35px; min-width:90px;">&lt;</button>
+                    <button onclick="submitComparison('=')" style="background: linear-gradient(180deg, #2ECC71 0%, #10B981 100%); --primary-shadow: #059669; font-size: 2.5rem; padding: 5px 35px; min-width:90px;">=</button>
+                    <button onclick="submitComparison('>')" style="background: linear-gradient(180deg, #FFC048 0%, #F59E0B 100%); --primary-shadow: #D97706; font-size: 2.5rem; padding: 5px 35px; min-width:90px;">&gt;</button>
                 </div>
             `;
         }
@@ -251,12 +630,12 @@
             state.currentPhrase = pick.phrase;
 
             q.innerText = "Find the picture that matches the phrase!";
-            setTimeout(() => speak(pick.phrase, 0.75), 300);
+            setTimeout(() => speak(`Let's read! ${pick.phrase}`, 0.80, false), 300);
 
             let wordsHTML = '';
             pick.phrase.split(" ").forEach(word => {
                 let cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-                wordsHTML += `<span class="word" onclick="speak('${cleanWord}', 0.55)">${word}</span>`;
+                wordsHTML += `<span class="word" onclick="speak('${cleanWord}', 0.75, true)">${word}</span>`;
             });
 
             let choices = [pick.emoji, ...pick.distractors.slice(0, 2)];
@@ -274,10 +653,10 @@
             area.innerHTML = `
                 <div class="phrase-board">
                     <div class="phrase-container">
-                        <button class="sound-repeat-btn" style="margin-bottom:0;" onclick="speak(state.currentPhrase, 0.75)">🔊</button>
-                        <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center;">${wordsHTML}</div>
+                        <button class="sound-repeat-btn" style="margin-bottom:0 !important;" onclick="speak(state.currentPhrase, 0.80, true)">🔊 Play Phrase</button>
+                        <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; width:100%; margin-top:10px;">${wordsHTML}</div>
                     </div>
-                    <p class="hint-text">👉 Tap words to hear their exact sounds!</p>
+                    <p class="hint-text">👉 Tap any word to hear its sound!</p>
                 </div>
                 <div class="options-grid">${cardsHTML}</div>
             `;
@@ -290,20 +669,20 @@
             let currentLetter = alphabet[state.tracingIndex];
             
             q.innerText = `Trace the letter!`;
-            speak("Trace the letter " + currentLetter);
+            speak("Let's learn! Trace the letter " + currentLetter, 0.85, false);
 
             area.innerHTML = `
                 <div class="color-container">
                     <label for="colorPicker">🎨 Pick Crayon: </label> 
-                    <input type="color" id="colorPicker" value="#9c27b0">
-                    <button onclick="clearTraceCanvas()" style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px; background:#ff7675; box-shadow: 0 3px 0 #d63031;">🧹 Clear</button>
+                    <input type="color" id="colorPicker" value="#6C5CE7">
+                    <button onclick="clearTraceCanvas()" style="padding: 8px 20px; font-size: 0.95rem; margin-left: 12px; background: linear-gradient(180deg, #FF7675 0%, #D63031 100%); --primary-shadow: #B31E1E;">🧹 Restart</button>
                 </div>
                 <div class="wrap">
                     <div class="guide" id="guideLetter">${currentLetter}</div>
                     <canvas id="traceCanvas" width="320" height="320"></canvas>
                 </div>
-                <div style="margin-top: 10px;">
-                    <button class="sound-repeat-btn" onclick="speak('Trace the letter ' + alphabet[state.tracingIndex])">🔊 Hear Letter</button>
+                <div style="margin-top: 15px;">
+                    <button class="sound-repeat-btn" onclick="speak('Trace the letter ' + alphabet[state.tracingIndex], 0.85, true)">🔊 Hear Letter</button>
                 </div>
             `;
             setupTracingCanvas();
@@ -316,20 +695,20 @@
             let currentNumber = numbers[state.numTracingIndex];
             
             q.innerText = `Trace the number!`;
-            speak("Trace the number " + currentNumber);
+            speak("Let's learn! Trace the number " + currentNumber, 0.85, false);
 
             area.innerHTML = `
                 <div class="color-container">
                     <label for="colorPicker">🎨 Pick Crayon: </label> 
-                    <input type="color" id="colorPicker" value="#0097e6">
-                    <button onclick="clearTraceCanvas()" style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px; background:#ff7675; box-shadow: 0 3px 0 #d63031;">🧹 Clear</button>
+                    <input type="color" id="colorPicker" value="#0097E6">
+                    <button onclick="clearTraceCanvas()" style="padding: 8px 20px; font-size: 0.95rem; margin-left: 12px; background: linear-gradient(180deg, #FF7675 0%, #D63031 100%); --primary-shadow: #B31E1E;">🧹 Restart</button>
                 </div>
                 <div class="wrap">
                     <div class="guide" id="guideLetter">${currentNumber}</div>
                     <canvas id="traceCanvas" width="320" height="320"></canvas>
                 </div>
-                <div style="margin-top: 10px;">
-                    <button class="sound-repeat-btn" onclick="speak('Trace the number ' + numbers[state.numTracingIndex])">🔊 Hear Number</button>
+                <div style="margin-top: 15px;">
+                    <button class="sound-repeat-btn" onclick="speak('Trace the number ' + numbers[state.numTracingIndex], 0.85, true)">🔊 Hear Number</button>
                 </div>
             `;
             setupTracingCanvas();
@@ -337,30 +716,28 @@
 
         // --- ANIMAL GAME ---
         else if (state.currentGame === 'animal') {
-            const animals = [
-                {n:'Lion', s:'Roar', e:'🦁'}, {n:'Chicken', s:'Bawk-bawk', e:'🐔'}, 
-                {n:'Monkey', s:'Ooh ooh aah aah', e:'🐒'}, {n:'Sheep', s:'Baaa', e:'🐑'}, 
-                {n:'Frog', s:'Ribbit', e:'🐸'}, {n:'Bee', s:'Buzzzz', e:'🐝'},
-                {n:'Bird', s:'Tweet tweet', e:'🐦'}, {n:'Cat', s:'Meow', e:'🐱'},
-                {n:'Duck', s:'Quack', e:'🦆'}, {n:'Pig', s:'Oink', e:'🐷'},
-                {n:'Dog', s:'Woof', e:'🐶'}, {n:'Goat', s:'Maaa', e:'🐐'},
-                {n:'Turkey', s:'Gobble gobble', e:'🦃'}
-            ];
             let pick = animals[Math.floor(Math.random() * animals.length)];
             state.correctAnswer = pick;
             state.currentAnimalSound = pick.s;
             
             q.innerText = `Which animal makes this sound?`;
-            speak("Which animal makes this sound?" + pick.s);
+            speak("Which animal makes this sound?", 0.85, true);
             
-            area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound)">🔊 Hear Sound Again</button><br>`;
+            // Delays playing the acoustic asset track slightly behind narrative instruction safely
+            setTimeout(() => {
+                if (state.currentGame === 'animal' && state.correctAnswer === pick) {
+                    speak(state.currentAnimalSound, 0.85, false);
+                }
+            }, 1600);
+            
+            area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound, 0.85, true)">🔊 Hear Sound Again</button><br>`;
             
             let choices = [...animals].sort(() => 0.5 - Math.random()).slice(0, 4);
             if (!choices.find(a => a.n === pick.n)) choices[0] = pick;
             
-            let buttonsContainer = `<div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">`;
+            let buttonsContainer = `<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 10px;">`;
             choices.sort(() => 0.5 - Math.random()).forEach(a => {
-                buttonsContainer += `<button class="animal-btn" style="background: #ffffff; border: 4px solid var(--primary); border-radius: 25px; box-shadow: 0 6px 0 #4834D4; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" onclick="handleAnimalResult('${a.n}'==='${pick.n}')">${a.e}</button>`;
+                buttonsContainer += `<button class="animal-btn" onclick="handleAnimalResult('${a.n}'==='${pick.n}')">${a.e}</button>`;
             });
             buttonsContainer += `</div>`;
             area.innerHTML += buttonsContainer;
@@ -379,8 +756,8 @@
             ];
             let pick = fruits[Math.floor(Math.random()*fruits.length)];
             state.correctAnswer = pick.n;
-            q.innerHTML = `Find the <span style="color:${pick.v}">${pick.c.toUpperCase()}</span> fruit!`;
-            speak(`Find the ${pick.c} fruit!`);
+            q.innerHTML = `Find the <span style="color:${pick.v}; text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff">${pick.c.toUpperCase()}</span> fruit!`;
+            speak(`Awesome! Find the ${pick.c} fruit!`, 0.85, false);
             
             let choices = [...fruits].sort(() => 0.5 - Math.random()).slice(0,4);
             if (!choices.find(f => f.n === pick.n)) choices[0] = pick;
@@ -397,14 +774,14 @@
         // --- MEMORY GAME ---
         else if (state.currentGame === 'memory') {
             q.innerText = "Match the Pairs!";
-            speak("Match the pairs!");
+            speak("Awesome! Match the pairs!", 0.85, false);
             const pool = ['🐶','🍎','⭐','🤖','🐸','🎈','🍭','🦁'];
             const selectedIcons = pool.sort(() => 0.5 - Math.random()).slice(0, 4);
             const icons = [...selectedIcons, ...selectedIcons].sort(() => 0.5 - Math.random());
             
-            let grid = `<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; max-width:400px; margin:auto;">`;
+            let grid = `<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; max-width:420px; margin:20px auto;">`;
             icons.forEach((icon, i) => {
-                grid += `<div id="c${i}" onclick="flip(${i},'${icon}')" style="background:var(--primary); height:80px; border-radius:15px; cursor:pointer; font-size:40px; display:flex; align-items:center; justify-content:center; color:transparent; transition: 0.3s; box-shadow: 0 4px 0 #4834D4;">${icon}</div>`;
+                grid += `<div id="c${i}" onclick="flip(${i},'${icon}')" style="background: linear-gradient(180deg, #8475F9 0%, #6C5CE7 100%); border: 4px solid white; height:85px; border-radius:24px; cursor:pointer; font-size:42px; display:flex; align-items:center; justify-content:center; color:transparent; transition: all 0.25s ease; box-shadow: 0 6px 0 #5243C7, 0 8px 15px rgba(0,0,0,0.1);">${icon}</div>`;
             });
             area.innerHTML = grid + `</div>`;
         }
@@ -422,7 +799,7 @@
             let pick = shapes[Math.floor(Math.random() * shapes.length)];
             state.correctAnswer = pick.n;
             q.innerText = `Can you find the ${pick.n.toUpperCase()}?`;
-            speak(`Can you find the ${pick.n}?`);
+            speak(`Let's learn! Can you find the ${pick.n}?`, 0.85, false);
             
             let choices = [...shapes].sort(() => 0.5 - Math.random()).slice(0, 4);
             if (!choices.find(s => s.n === pick.n)) choices[0] = pick;
@@ -441,7 +818,7 @@
             if (isAddition) {
                 state.correctAnswer = n1 + n2;
                 q.innerText = `${n1} + ${n2} = ?`;
-                speak(`${n1} plus ${n2}`); 
+                speak(`Awesome! What is ${n1} plus ${n2}?`, 0.85, false); 
             } else {
                 if (n2 > n1) {
                     let temp = n1;
@@ -450,10 +827,13 @@
                 }
                 state.correctAnswer = n1 - n2;
                 q.innerText = `${n1} - ${n2} = ?`;
-                speak(`${n1} minus ${n2}`); 
+                speak(`Awesome! What is ${n1} minus ${n2}?`, 0.85, false); 
             }
 
-            area.innerHTML = `<input type="number" id="math-ans" style="width:100px; padding:15px; font-size:24px; border-radius:15px; border:3px solid #ddd; outline:none;"><br><button onclick="checkMath()">Check!</button>`;
+            area.innerHTML = `
+                <input type="number" id="math-ans" inputmode="numeric"><br>
+                <button onclick="checkMath()" style="background: linear-gradient(180deg, #00ECC1 0%, #00B894 100%); --primary-shadow: #009476; padding: 12px 45px;">Check Answer!</button>
+            `;
             
             setTimeout(() => {
                 let input = document.getElementById('math-ans');
@@ -466,29 +846,35 @@
             let num = Math.floor(Math.random() * 9) + 1;
             state.correctAnswer = num;
             q.innerText = "How many candies do you see?";
-            speak("How many candies do you see?");
+            speak("Let's learn! How many candies do you see?", 0.85, false);
             
             let items = ""; for(let i=0; i<num; i++) items += "🍭";
-            area.innerHTML = `<div style="font-size:50px; margin:20px;">${items}</div>`;
-            for(let i=1; i<=10; i++) area.innerHTML += `<button onclick="handleResult(${i}===${num})">${i}</button>`;
+            area.innerHTML = `<div style="font-size:55px; margin:20px; filter: drop-shadow(0 4px 0px rgba(0,0,0,0.05)); letter-spacing: 4px;">${items}</div>`;
+            
+            let buttonRow = `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 440px; margin: auto;">`;
+            for(let i=1; i<=10; i++) {
+                buttonRow += `<button onclick="handleResult(${i}===${num})" style="width: 70px; height: 65px; margin: 5px; font-size:1.4rem; background: linear-gradient(180deg, #9FA8DA 0%, #5C6BC0 100%); --primary-shadow: #3F51B5;">${i}</button>`;
+            }
+            buttonRow += `</div>`;
+            area.innerHTML += buttonRow;
         }
     }
 
-    /* --- Comparison Verification Handler --- */
     function submitComparison(choice) {
         const signEl = document.getElementById('compare-sign');
         if (signEl) {
             signEl.innerText = state.correctAnswer;
-            signEl.style.color = 'var(--primary)';
+            signEl.style.color = '#6C5CE7';
+            signEl.style.fontWeight = '700';
         }
         
         let isCorrect = (choice === state.correctAnswer);
         let words = (state.correctAnswer === '<') ? 'is less than' : (state.correctAnswer === '>') ? 'is greater than' : 'is equal to';
         
         if (isCorrect) {
-            speak(`Correct! ${state.num1} ${words} ${state.num2}.`);
+            speak(`Great job! ${state.num1} ${words} ${state.num2}.`, 0.85, true);
         } else {
-            speak(`Not quite. ${state.num1} ${words} ${state.num2}.`);
+            speak(`Try again! ${state.num1} ${words} ${state.num2}.`, 0.85, true);
         }
         
         const fb = document.getElementById('feedback');
@@ -507,7 +893,6 @@
         updateHUD();
     }
 
-    /* --- Universal Canvas Event Engine (Alphabet & Numbers) --- */
     function setupTracingCanvas() {
         const c = document.getElementById("traceCanvas");
         if (!c) return;
@@ -531,7 +916,7 @@
         const draw = (coords) => {
             if (!drawing || state.traceDone) return;
             canvasCtx.strokeStyle = document.getElementById("colorPicker").value;
-            canvasCtx.lineWidth = 14; 
+            canvasCtx.lineWidth = 16; 
             canvasCtx.lineCap = "round";
             canvasCtx.lineJoin = "round";
             canvasCtx.lineTo(coords.x, coords.y);
@@ -569,8 +954,8 @@
         if (state.traceDone || state.rawPointsCount === 0) return;
 
         if (state.rawPointsCount < 20) {
-            document.getElementById("feedback").innerHTML = "<span style='color:var(--warning)'>Keep tracing to finish!</span>";
-            speak("Keep tracing to finish!");
+            document.getElementById("feedback").innerHTML = "<span style='color:var(--warning-shadow)'>Keep tracing to finish!</span>";
+            speak("Keep tracing to finish!", 0.85, true);
             return;
         }
 
@@ -583,10 +968,10 @@
         setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
 
         if (state.currentGame === 'alphabet') {
-            speak("Super job! You traced the letter " + alphabet[state.tracingIndex]);
+            speak("Awesome! You traced the letter " + alphabet[state.tracingIndex], 0.85, true);
             state.tracingIndex = (state.tracingIndex + 1) % alphabet.length;
         } else {
-            speak("Super job! You traced the number " + numbers[state.numTracingIndex]);
+            speak("Awesome! You traced the number " + numbers[state.numTracingIndex], 0.85, true);
             state.numTracingIndex = (state.numTracingIndex + 1) % numbers.length;
         }
         
@@ -596,11 +981,13 @@
     function flip(i, icon) {
         if (isProcessing) return;
         let el = document.getElementById('c'+i);
-        if (el.style.color === 'white') return;
+        if (el.style.color === 'rgb(45, 52, 54)' || el.style.color === 'white') return;
 
-        el.style.color = 'white'; 
-        el.style.background = 'white'; 
-        el.style.border = '3px solid var(--primary)';
+        el.style.color = '#2D3436'; 
+        el.style.background = '#FFFFFF'; 
+        el.style.borderColor = '#6C5CE7';
+        el.style.boxShadow = '0 4px 0px #CBD5E1';
+        el.style.transform = 'scale(1.05)';
         
         flipped.push({i, icon});
 
@@ -609,13 +996,19 @@
             if (flipped[0].icon === flipped[1].icon) {
                 state.score += 10;
                 updateHUD();
-                document.getElementById('feedback').innerHTML = "✨ Match! ✨";
-                speak("Match!");
+                document.getElementById('feedback').innerHTML = "<span style='color:var(--success)'>✨ Match! ✨</span>";
+                speak("Great job! Match!", 0.85, true);
+                
+                let c1 = document.getElementById('c'+flipped[0].i);
+                let c2 = document.getElementById('c'+flipped[1].i);
+                c1.style.background = '#E8F5E9'; c1.style.borderColor = 'var(--success)';
+                c2.style.background = '#E8F5E9'; c2.style.borderColor = 'var(--success)';
+                
                 flipped = [];
                 isProcessing = false;
                 
                 const all = document.querySelectorAll('[id^="c"]');
-                const matched = Array.from(all).filter(card => card.style.color === 'white');
+                const matched = Array.from(all).filter(card => card.style.color === 'rgb(45, 52, 54)' || card.style.color === 'white');
                 if (matched.length === all.length) {
                     setTimeout(nextQuestion, 1500);
                 }
@@ -624,11 +1017,14 @@
                     flipped.forEach(f => {
                         let card = document.getElementById('c'+f.i);
                         card.style.color = 'transparent'; 
-                        card.style.background = 'var(--primary)';
-                        card.style.border = 'none';
+                        card.style.background = 'linear-gradient(180deg, #8475F9 0%, #6C5CE7 100%)';
+                        card.style.borderColor = 'white';
+                        card.style.boxShadow = '0 6px 0 #5243C7';
+                        card.style.transform = 'none';
                     });
                     flipped = [];
                     isProcessing = false;
+                    document.getElementById('feedback').innerText = '';
                 }, 800);
             }
         }
@@ -651,16 +1047,16 @@
             setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
             
             area.innerHTML = `
-                <div style="margin: 20px auto; padding: 20px; background: #fff; border-radius: 20px; border: 4px dashed var(--success); max-width: 200px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                    <div style="font-size: 80px; line-height: 1;">${state.correctAnswer.e}</div>
-                    <div style="font-size: 1.8rem; font-weight: bold; color: #2d3436; margin-top: 10px;">${state.correctAnswer.n}</div>
+                <div style="margin: 20px auto; padding: 20px; background: #FFF; border-radius: 28px; border: 5px dashed var(--success); max-width: 220px; box-shadow: 0 12px 24px rgba(0,0,0,0.06); transform: scale(1.05); animation: pulse 0.5s infinite;">
+                    <div style="font-size: 85px; line-height: 1;">${state.correctAnswer.e}</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #2D3436; margin-top: 12px;">${state.correctAnswer.n}</div>
                 </div>
             `;
-            speak("Great job! It's a " + state.correctAnswer.n);
+            speak("Great job! It's a " + state.correctAnswer.n, 0.85, true);
             setTimeout(nextQuestion, 2500);
         } else {
             fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
-            speak("Oops! Try again!");
+            speak("Try again!", 0.85, true);
             state.lives--;
             if (state.lives <= 0) endGame();
             else setTimeout(nextQuestion, 1500);
@@ -672,14 +1068,14 @@
         const fb = document.getElementById('feedback');
         if(isCorrect) {
             fb.innerHTML = "<span style='color:var(--success)'>✨ Great Job! ✨</span>";
-            speak("Great job!");
+            speak("Great job!", 0.85, true);
             state.score += 5;
             document.getElementById('game-board').classList.add('correct-anim');
             setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
             setTimeout(nextQuestion, 1500);
         } else {
             fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
-            speak("Oops! Try again!");
+            speak("Try again!", 0.85, true);
             state.lives--;
             if(state.lives <= 0) endGame();
             else setTimeout(nextQuestion, 1500);
@@ -693,7 +1089,7 @@
         music.pause();
         music.currentTime = 0;
 
-        speak("Game over! Wonderful job!");
+        speak("Awesome! Wonderful job!", 0.85, true);
 
         if(state.score > state.highScore) {
             state.highScore = state.score;

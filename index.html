@@ -979,13 +979,14 @@
             `;
             speak("Great job! It's a " + state.correctAnswer.n, 0.9, true);
             setTimeout(nextQuestion, 2500);
-        } else {
-            fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
-            speak("Oops! Try again!", 0.9, true);
-            state.lives--;
-            if (state.lives <= 0) endGame();
-            else setTimeout(nextQuestion, 1500);
-        }
+       } else {
+    fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
+
+    state.lives--;
+
+    if (state.lives <= 0) endGame();
+    else setTimeout(nextQuestion, 1500);
+}
         updateHUD();
     }
 
@@ -999,12 +1000,13 @@
             setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
             setTimeout(nextQuestion, 1500);
         } else {
-            fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
-            speak("Oops! Try again!", 0.9, true);
-            state.lives--;
-            if(state.lives <= 0) endGame();
-            else setTimeout(nextQuestion, 1500);
-        }
+    fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
+
+    state.lives--;
+
+    if (state.lives <= 0) endGame();
+    else setTimeout(nextQuestion, 1500);
+}
         updateHUD();
     }
 

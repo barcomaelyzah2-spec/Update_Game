@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Academy Pro</title>
-    <!-- Premium Kid-Friendly Font Framework -->
+    <title>Kid-Tastic Adventures</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -371,10 +370,9 @@
     </div>
 
     <div class="brand-header">
-        <h1 class="brand-title">Kids Academy Pro</h1>
+        <h1 class="brand-title">Kid-Tastic Adventures</h1>
     </div>
 
-    <!-- MAIN DASHBOARD MENU -->
     <div id="menu" class="game-container">
         <div class="welcome-mascot">✨🐻✨</div>
         <div class="highscore-badge">
@@ -392,12 +390,11 @@
             <button onclick="startGame('memory')"><span>🧠</span> Memory</button>
             <button onclick="startGame('read')"><span>📚</span> Listen &amp; Read</button>
             <button onclick="startGame('compare')"><span>🧮</span> Comparisons</button>
-            <button onclick="transformedStartGame('alphabet')"><span>🔤</span> Alphabet Trace</button>
-            <button onclick="transformedStartGame('numtrace')"><span>🔢</span> Number Trace</button>
+            <button onclick="startGame('alphabet')"><span>🔤</span> Alphabet Trace</button>
+            <button onclick="startGame('numtrace')"><span>🔢</span> Number Trace</button>
         </div>
     </div>
 
-    <!-- MAIN GAME FIELD -->
     <div id="game-board" class="game-container hidden">
         <div class="stats-bar">
             <span>❤️ <span id="lives">5</span></span>
@@ -421,52 +418,6 @@
     </audio>
 
 <script>
-    /* --- Premium Isolated Audio Engine Architecture --- */
-    const AudioEngine = {
-        activeAudioTrack: null,
-        preloadedAssets: {},
-
-        stopAllActiveAudio() {
-            if (this.activeAudioTrack) {
-                this.activeAudioTrack.pause();
-                this.activeAudioTrack.currentTime = 0;
-                this.activeAudioTrack = null;
-            }
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
-        },
-
-        playRealisticTrack(url) {
-            this.stopAllActiveAudio();
-            try {
-                if (this.preloadedAssets[url]) {
-                    this.activeAudioTrack = this.preloadedAssets[url];
-                } else {
-                    this.activeAudioTrack = new Audio(url);
-                }
-                this.activeAudioTrack.volume = 0.85;
-                const promise = this.activeAudioTrack.play();
-                if (promise !== undefined) {
-                    promise.catch(error => console.log("Audio process resolution deferred until explicit gesture layout interaction.", error));
-                }
-            } catch(e) {
-                console.error("Audio execution pipeline fault caught securely:", e);
-            }
-        },
-
-        preloadRegistry(urlList) {
-            urlList.forEach(url => {
-                if (!this.preloadedAssets[url]) {
-                    const audioObj = new Audio();
-                    audioObj.src = url;
-                    audioObj.preload = 'auto';
-                    this.preloadedAssets[url] = audioObj;
-                }
-            });
-        }
-    };
-
     let state = {
         score: 0, lives: 5, level: 1, 
         highScore: parseInt(localStorage.getItem('kidsHS')) || 0,
@@ -492,35 +443,31 @@
     const readGameData = [
         { phrase: "Big red apple", emoji: "🍎", distractors: ["🍌", "🚗", "🐶"] },
         { phrase: "Run fast", emoji: "🏃", distractors: ["🛌", "🍔", "🧸"] },
-        { phrase: "A blue car", emoji: "🚗", distractors: ["✈️", "🐱", "🍎"] },
+        { phrase: "A red  car", emoji: "🚗", distractors: ["✈️", "🐱", "🍎"] },
         { phrase: "Happy cat", emoji: "🐱", distractors: ["🐸", "🍕", "⏰"] },
         { phrase: "One green tree", emoji: "🌳", distractors: ["🎈", "🐟", "🍦"] },
         { phrase: "Yellow sun", emoji: "☀️", distractors: ["🌙", "🌧️", "⛵"] },
         { phrase: "Swim in water", emoji: "🏊", distractors: ["🚲", "😴", "🍕"] },
         { phrase: "Cute little dog", emoji: "🐶", distractors: ["🦁", "🚜", "🍩"] },
         { phrase: "Fly a kite", emoji: "🪁", distractors: ["🚗", "🎸", "🧁"] },
+        { phrase: "Blue little bird", emoji: "🐦", distractors: ["🐶", "🐱", "🐠"] },
+{ phrase: "Eat a banana", emoji: "🍌", distractors: ["🍎", "🍇", "🍊"] },
+{ phrase: "A green frog", emoji: "🐸", distractors: ["🐢", "🐍", "🦎"] },
+{ phrase: "Read a book", emoji: "📚", distractors: ["✏️", "🖍️", "🎒"] },
+{ phrase: "Drink some milk", emoji: "🥛", distractors: ["🧃", "☕", "🍵"] },
+{ phrase: "A yellow duck", emoji: "🦆", distractors: ["🐔", "🐧", "🦅"] },
+{ phrase: "Play the guitar", emoji: "🎸", distractors: ["🥁", "🎹", "🎺"] },
+{ phrase: "A happy fish", emoji: "🐟", distractors: ["🐙", "🦀", "🐬"] },
+{ phrase: "Open the door", emoji: "🚪", distractors: ["🪟", "🛏️", "🪑"] },
+{ phrase: "Ride a bicycle", emoji: "🚲", distractors: ["🚗", "🚌", "🏍️"] },
+{ phrase: "See the rainbow", emoji: "🌈", distractors: ["☁️", "⭐", "🌙"] },
+{ phrase: "Pick a flower", emoji: "🌸", distractors: ["🌳", "🍀", "🌵"] },
+{ phrase: "Eat some pizza", emoji: "🍕", distractors: ["🍔", "🌭", "🍟"] },
+{ phrase: "A cute rabbit", emoji: "🐰", distractors: ["🐭", "🐹", "🐱"] },
+{ phrase: "A shining star", emoji: "⭐", distractors: ["🌙", "☀️", "☁️"] },
+        { phrase: "A small cow", emoji: "🐄", distractors: ["🐖", "🐑", "🐐"] },
         { phrase: "Sweet ice cream", emoji: "🍦", distractors: ["🍿", "🍉", "👠"] }
     ];
-
-    /* --- High-Quality Realistic Asset Mapping --- */
-    const animals = [
-        {n:'Lion', s:'Roar', e:'🦁', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_Growl.ogg'}, 
-        {n:'Chicken', s:'Bawk-bawk', e:'🐔', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/1/14/Chicken_cluck.ogg'}, 
-        {n:'Monkey', s:'Ooh ooh aah aah', e:'🐒', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/e/ec/Chimpanzee_vocalizations.ogg'}, 
-        {n:'Sheep', s:'Baaa', e:'🐑', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/2/22/Sheep_bleat.ogg'}, 
-        {n:'Frog', s:'Ribbit', e:'🐸', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/6/6c/Rana_temporaria_croak.ogg'}, 
-        {n:'Bee', s:'Buzzzz', e:'🐝', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/3/30/Apis_mellifera_flying.ogg'},
-        {n:'Bird', s:'Tweet tweet', e:'🐦', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/4/4c/House_Sparrow_chirp.ogg'}, 
-        {n:'Cat', s:'Meow', e:'🐱', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/2/23/Cat_meow_1.ogg'},
-        {n:'Duck', s:'Quack', e:'🦆', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/a/a2/Anas_platyrhynchos_quack.ogg'}, 
-        {n:'Pig', s:'Oink', e:'🐷', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/c/c8/Sus_scrofa_domesticus_grunt.ogg'},
-        {n:'Dog', s:'Woof', e:'🐶', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/b/b3/Dog_bark_5.ogg'}, 
-        {n:'Goat', s:'Maaa', e:'🐐', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/c/cc/Goat_bleat.ogg'},
-        {n:'Turkey', s:'Gobble gobble', e:'🦃', audioUrl:'https://upload.wikimedia.org/wikipedia/commons/c/c5/Turkey_gobble.ogg'}
-    ];
-
-    // Trigger proactive caching sequences
-    AudioEngine.preloadRegistry(animals.map(a => a.audioUrl));
 
     function updateHUD() {
         document.getElementById('score').innerText = state.score;
@@ -530,45 +477,20 @@
         document.getElementById('menu-stars').innerText = s > 100 ? "👑⭐⭐⭐⭐⭐" : s > 70 ? "⭐⭐⭐⭐⭐" : s > 40 ? "⭐⭐⭐⭐" : s > 20 ? "⭐⭐⭐" : "⭐";
     }
 
-    /* --- Upgraded High-Contrast Vocalization Synthesizer Engine --- */
-    function speak(text, rate = 0.85, cancelPrevious = true) {
-        if (cancelPrevious) {
-            AudioEngine.stopAllActiveAudio();
-        }
-
-        // Logic routing to handle pure acoustic recordings if the state profile requests the animal's sound
-        if (state.currentGame === 'animal' && text === state.currentAnimalSound && state.correctAnswer && state.correctAnswer.audioUrl) {
-            AudioEngine.playRealisticTrack(state.correctAnswer.audioUrl);
-            return;
-        }
-
+    function speak(text, rate = 0.9, cancelPrevious = true) {
         if ('speechSynthesis' in window) {
+            if (cancelPrevious) {
+                window.speechSynthesis.cancel(); 
+            }
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = rate;
-            utterance.pitch = 1.35; // Mathematically shifts baseline structure to sound child-like, bright, and cheerful
-            
-            // Enforce voice selection protocols targeting natural mobile narrators
-            const systemVoices = window.speechSynthesis.getVoices();
-            const childFriendlyNarrator = systemVoices.find(v => 
-                v.name.includes('Natural') || 
-                v.name.includes('Kid') || 
-                v.name.includes('Google US English') || 
-                v.name.includes('Zira') ||
-                v.lang.startsWith('en-US')
-            );
-            if (childFriendlyNarrator) utterance.voice = childFriendlyNarrator;
-            
+            utterance.pitch = 1.2;
             window.speechSynthesis.speak(utterance);
         }
     }
 
-    // Direct interface hook configuration supporting functional mapping rules
-    function transformedStartGame(mode) {
-        startGame(mode);
-    }
-
     function startGame(type) {
-        AudioEngine.stopAllActiveAudio();
+        window.speechSynthesis.cancel(); 
         state.currentGame = type;
         state.score = 0; state.lives = 5; state.level = 1; 
         state.tracingIndex = 0; state.numTracingIndex = 0;
@@ -582,8 +504,8 @@
         document.getElementById('game-title').innerText = titleDisplay;
         
         const music = document.getElementById('bgMusic');
-        music.volume = 0.10; // Normalized baseline mix allowing primary audio to cut through cleanly
-        music.play().catch(() => console.log("Music session state configured successfully"));
+        music.volume = 0.15;
+        music.play().catch(() => console.log("Music interaction ready"));
 
         updateHUD();
         nextQuestion();
@@ -607,7 +529,7 @@
             else state.correctAnswer = '=';
 
             q.innerText = "Choose the correct sign wrapper!";
-            setTimeout(() => speak(`Let's learn! ${state.num1} compared to ${state.num2}. Choose less than, equal, or greater than.`, 0.85, false), 300);
+            setTimeout(() => speak(`${state.num1} compared to ${state.num2}. Choose less than, equal, or greater than.`, 0.9, false), 300);
 
             area.innerHTML = `
                 <div style="display: flex; justify-content: center; align-items: center; gap: 20px; font-size: 3.5rem; font-weight: 700; margin: 20px 0;">
@@ -630,12 +552,12 @@
             state.currentPhrase = pick.phrase;
 
             q.innerText = "Find the picture that matches the phrase!";
-            setTimeout(() => speak(`Let's read! ${pick.phrase}`, 0.80, false), 300);
+            setTimeout(() => speak(pick.phrase, 0.75, false), 300);
 
             let wordsHTML = '';
             pick.phrase.split(" ").forEach(word => {
                 let cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-                wordsHTML += `<span class="word" onclick="speak('${cleanWord}', 0.75, true)">${word}</span>`;
+                wordsHTML += `<span class="word" onclick="speak('${cleanWord}', 0.55, true)">${word}</span>`;
             });
 
             let choices = [pick.emoji, ...pick.distractors.slice(0, 2)];
@@ -653,7 +575,7 @@
             area.innerHTML = `
                 <div class="phrase-board">
                     <div class="phrase-container">
-                        <button class="sound-repeat-btn" style="margin-bottom:0 !important;" onclick="speak(state.currentPhrase, 0.80, true)">🔊 Play Phrase</button>
+                        <button class="sound-repeat-btn" style="margin-bottom:0 !important;" onclick="speak(state.currentPhrase, 0.75, true)">🔊 Play Phrase</button>
                         <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; width:100%; margin-top:10px;">${wordsHTML}</div>
                     </div>
                     <p class="hint-text">👉 Tap any word to hear its sound!</p>
@@ -669,7 +591,7 @@
             let currentLetter = alphabet[state.tracingIndex];
             
             q.innerText = `Trace the letter!`;
-            speak("Let's learn! Trace the letter " + currentLetter, 0.85, false);
+            speak("Trace the letter " + currentLetter, 0.9, false);
 
             area.innerHTML = `
                 <div class="color-container">
@@ -682,7 +604,7 @@
                     <canvas id="traceCanvas" width="320" height="320"></canvas>
                 </div>
                 <div style="margin-top: 15px;">
-                    <button class="sound-repeat-btn" onclick="speak('Trace the letter ' + alphabet[state.tracingIndex], 0.85, true)">🔊 Hear Letter</button>
+                    <button class="sound-repeat-btn" onclick="speak('Trace the letter ' + alphabet[state.tracingIndex], 0.9, true)">🔊 Hear Letter</button>
                 </div>
             `;
             setupTracingCanvas();
@@ -695,7 +617,7 @@
             let currentNumber = numbers[state.numTracingIndex];
             
             q.innerText = `Trace the number!`;
-            speak("Let's learn! Trace the number " + currentNumber, 0.85, false);
+            speak("Trace the number " + currentNumber, 0.9, false);
 
             area.innerHTML = `
                 <div class="color-container">
@@ -708,7 +630,7 @@
                     <canvas id="traceCanvas" width="320" height="320"></canvas>
                 </div>
                 <div style="margin-top: 15px;">
-                    <button class="sound-repeat-btn" onclick="speak('Trace the number ' + numbers[state.numTracingIndex], 0.85, true)">🔊 Hear Number</button>
+                    <button class="sound-repeat-btn" onclick="speak('Trace the number ' + numbers[state.numTracingIndex], 0.9, true)">🔊 Hear Number</button>
                 </div>
             `;
             setupTracingCanvas();
@@ -716,21 +638,23 @@
 
         // --- ANIMAL GAME ---
         else if (state.currentGame === 'animal') {
+            const animals = [
+                {n:'Lion', s:'Roar', e:'🦁'}, {n:'Chicken', s:'Bawk-bawk', e:'🐔'}, 
+                {n:'Monkey', s:'Ooh ooh aah aah', e:'🐒'}, {n:'Sheep', s:'Baaa', e:'🐑'}, 
+                {n:'Frog', s:'Ribbit ribbit', e:'🐸'}, {n:'Bee', s:'Buzzzz', e:'🐝'},
+                {n:'Bird', s:'Tweet tweet', e:'🐦'}, {n:'Cat', s:'Meow', e:'🐱'},
+                {n:'Duck', s:'Quack', e:'🦆'}, {n:'Pig', s:'Oink', e:'🐷'},
+                {n:'Dog', s:'Woof', e:'🐶'}, {n:'Goat', s:'Meee', e:'🐐'},{n:'Cow', s:' mooo', e:'🐄'},
+                {n:'Snake', s:'Ssss', e:'🐍'}
+            ];
             let pick = animals[Math.floor(Math.random() * animals.length)];
             state.correctAnswer = pick;
             state.currentAnimalSound = pick.s;
             
             q.innerText = `Which animal makes this sound?`;
-            speak("Which animal makes this sound?", 0.85, true);
+            speak("Which animal makes this sound? " + pick.s, 0.9, false);
             
-            // Delays playing the acoustic asset track slightly behind narrative instruction safely
-            setTimeout(() => {
-                if (state.currentGame === 'animal' && state.correctAnswer === pick) {
-                    speak(state.currentAnimalSound, 0.85, false);
-                }
-            }, 1600);
-            
-            area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound, 0.85, true)">🔊 Hear Sound Again</button><br>`;
+            area.innerHTML += `<button class="sound-repeat-btn" onclick="speak(state.currentAnimalSound, 0.9, true)">🔊 Hear Sound Again</button><br>`;
             
             let choices = [...animals].sort(() => 0.5 - Math.random()).slice(0, 4);
             if (!choices.find(a => a.n === pick.n)) choices[0] = pick;
@@ -757,7 +681,7 @@
             let pick = fruits[Math.floor(Math.random()*fruits.length)];
             state.correctAnswer = pick.n;
             q.innerHTML = `Find the <span style="color:${pick.v}; text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff">${pick.c.toUpperCase()}</span> fruit!`;
-            speak(`Awesome! Find the ${pick.c} fruit!`, 0.85, false);
+            speak(`Find the ${pick.c} fruit!`, 0.9, false);
             
             let choices = [...fruits].sort(() => 0.5 - Math.random()).slice(0,4);
             if (!choices.find(f => f.n === pick.n)) choices[0] = pick;
@@ -774,7 +698,7 @@
         // --- MEMORY GAME ---
         else if (state.currentGame === 'memory') {
             q.innerText = "Match the Pairs!";
-            speak("Awesome! Match the pairs!", 0.85, false);
+            speak("Match the pairs!", 0.9, false);
             const pool = ['🐶','🍎','⭐','🤖','🐸','🎈','🍭','🦁'];
             const selectedIcons = pool.sort(() => 0.5 - Math.random()).slice(0, 4);
             const icons = [...selectedIcons, ...selectedIcons].sort(() => 0.5 - Math.random());
@@ -799,7 +723,7 @@
             let pick = shapes[Math.floor(Math.random() * shapes.length)];
             state.correctAnswer = pick.n;
             q.innerText = `Can you find the ${pick.n.toUpperCase()}?`;
-            speak(`Let's learn! Can you find the ${pick.n}?`, 0.85, false);
+            speak(`Can you find the ${pick.n}?`, 0.9, false);
             
             let choices = [...shapes].sort(() => 0.5 - Math.random()).slice(0, 4);
             if (!choices.find(s => s.n === pick.n)) choices[0] = pick;
@@ -818,7 +742,7 @@
             if (isAddition) {
                 state.correctAnswer = n1 + n2;
                 q.innerText = `${n1} + ${n2} = ?`;
-                speak(`Awesome! What is ${n1} plus ${n2}?`, 0.85, false); 
+                speak(`${n1} plus ${n2}`, 0.9, false); 
             } else {
                 if (n2 > n1) {
                     let temp = n1;
@@ -827,7 +751,7 @@
                 }
                 state.correctAnswer = n1 - n2;
                 q.innerText = `${n1} - ${n2} = ?`;
-                speak(`Awesome! What is ${n1} minus ${n2}?`, 0.85, false); 
+                speak(`${n1} minus ${n2}`, 0.9, false); 
             }
 
             area.innerHTML = `
@@ -846,7 +770,7 @@
             let num = Math.floor(Math.random() * 9) + 1;
             state.correctAnswer = num;
             q.innerText = "How many candies do you see?";
-            speak("Let's learn! How many candies do you see?", 0.85, false);
+            speak("How many candies do you see?", 0.9, false);
             
             let items = ""; for(let i=0; i<num; i++) items += "🍭";
             area.innerHTML = `<div style="font-size:55px; margin:20px; filter: drop-shadow(0 4px 0px rgba(0,0,0,0.05)); letter-spacing: 4px;">${items}</div>`;
@@ -872,9 +796,9 @@
         let words = (state.correctAnswer === '<') ? 'is less than' : (state.correctAnswer === '>') ? 'is greater than' : 'is equal to';
         
         if (isCorrect) {
-            speak(`Great job! ${state.num1} ${words} ${state.num2}.`, 0.85, true);
+            speak(`Correct! ${state.num1} ${words} ${state.num2}.`, 0.9, true);
         } else {
-            speak(`Try again! ${state.num1} ${words} ${state.num2}.`, 0.85, true);
+            speak(`Not quite. ${state.num1} ${words} ${state.num2}.`, 0.9, true);
         }
         
         const fb = document.getElementById('feedback');
@@ -955,7 +879,7 @@
 
         if (state.rawPointsCount < 20) {
             document.getElementById("feedback").innerHTML = "<span style='color:var(--warning-shadow)'>Keep tracing to finish!</span>";
-            speak("Keep tracing to finish!", 0.85, true);
+            speak("Keep tracing to finish!", 0.9, true);
             return;
         }
 
@@ -968,10 +892,10 @@
         setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
 
         if (state.currentGame === 'alphabet') {
-            speak("Awesome! You traced the letter " + alphabet[state.tracingIndex], 0.85, true);
+            speak("Super job! You traced the letter " + alphabet[state.tracingIndex], 0.9, true);
             state.tracingIndex = (state.tracingIndex + 1) % alphabet.length;
         } else {
-            speak("Awesome! You traced the number " + numbers[state.numTracingIndex], 0.85, true);
+            speak("Super job! You traced the number " + numbers[state.numTracingIndex], 0.9, true);
             state.numTracingIndex = (state.numTracingIndex + 1) % numbers.length;
         }
         
@@ -997,8 +921,9 @@
                 state.score += 10;
                 updateHUD();
                 document.getElementById('feedback').innerHTML = "<span style='color:var(--success)'>✨ Match! ✨</span>";
-                speak("Great job! Match!", 0.85, true);
+                speak("Match!", 0.9, true);
                 
+                // Keep look fixed
                 let c1 = document.getElementById('c'+flipped[0].i);
                 let c2 = document.getElementById('c'+flipped[1].i);
                 c1.style.background = '#E8F5E9'; c1.style.borderColor = 'var(--success)';
@@ -1052,11 +977,11 @@
                     <div style="font-size: 2rem; font-weight: 700; color: #2D3436; margin-top: 12px;">${state.correctAnswer.n}</div>
                 </div>
             `;
-            speak("Great job! It's a " + state.correctAnswer.n, 0.85, true);
+            speak("Great job! It's a " + state.correctAnswer.n, 0.9, true);
             setTimeout(nextQuestion, 2500);
         } else {
             fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
-            speak("Try again!", 0.85, true);
+            speak("Oops! Try again!", 0.9, true);
             state.lives--;
             if (state.lives <= 0) endGame();
             else setTimeout(nextQuestion, 1500);
@@ -1068,14 +993,14 @@
         const fb = document.getElementById('feedback');
         if(isCorrect) {
             fb.innerHTML = "<span style='color:var(--success)'>✨ Great Job! ✨</span>";
-            speak("Great job!", 0.85, true);
+            speak("Great job!", 0.9, true);
             state.score += 5;
             document.getElementById('game-board').classList.add('correct-anim');
             setTimeout(() => document.getElementById('game-board').classList.remove('correct-anim'), 500);
             setTimeout(nextQuestion, 1500);
         } else {
             fb.innerHTML = "<span style='color:var(--danger)'>Oops! Try again!</span>";
-            speak("Try again!", 0.85, true);
+            speak("Oops! Try again!", 0.9, true);
             state.lives--;
             if(state.lives <= 0) endGame();
             else setTimeout(nextQuestion, 1500);
@@ -1089,7 +1014,7 @@
         music.pause();
         music.currentTime = 0;
 
-        speak("Awesome! Wonderful job!", 0.85, true);
+        speak("Game over! Wonderful job!", 0.9, true);
 
         if(state.score > state.highScore) {
             state.highScore = state.score;
